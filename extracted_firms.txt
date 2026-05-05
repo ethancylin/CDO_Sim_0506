@@ -1,0 +1,129 @@
+No. Reference Entity Sub-Index CLIP Reference Obligation CUSIP/ISIN Weighting Monoline
+1 Ally Financial Inc. BBB,FIN,HVOL 0C205PAK7 ALLYFI 5.543 17Jan31 02005NBW9 0.01205 
+2 Altria Group, Inc. BBB,CONS 0C4291AJ3 MO 2.45 04Feb32 02209SBL6 0.01205 
+3 AMERICAN ELECTRIC POWER COMPANY, INC. BBB,ENRG 027A8AAF3 AEP 3.2 13Nov27 025537AJ0 0.01205 
+4 Amgen Inc. BBB,CONS 0D4278AH2 AMGN 5.25 02Mar30 031162DQ0 0.01205 
+5 APA Corporation BBB,ENRG,HVOL 03AB7TAA6 APACOR 4.375 15Oct28 03743QAD0 0.01205 
+6 ARROW ELECTRONICS, INC. BBB,TMT 0E69A8AE6 ARW 7.5 15Jan27 042735AK6 0.01205 
+7 AT&T Inc. BBB,TMT 0A226XAK9 ATTINC 3.8 15Feb27 00206RHW5 0.01205 
+8 AutoZone, Inc. BBB,CONS 0F8665AI9 AZO 4.75 01Aug32 053332BB7 0.01205 
+9 Avnet, Inc. BBB,TMT 058B87AF0 AVT 3 15May31 053807AU7 0.01205 
+10 BARRICK MINING CORPORATION BBB,INDU 06ECDOAA7 BARRIMI 5.8 15Nov34 067901AA6 0.01205 
+11 Baxter International Inc. BBB,CONS,HVOL 0H8994AH1 BAX (3) 2.539 01Feb32 071813CS6 0.01205 
+12 Best Buy Co., Inc. BBB,CONS 08EB67AF9 BBY 4.45 01Oct28 08652BAA7 0.01205 
+13 Block Financial LLC BBB,FIN,HVOL 09C9BKAD4 HRB-Fllc 2.5 15Jul28 093662AJ3 0.01205 
+14 BorgWarner Inc. BBB,CONS 09IG96AE4 BWA 2.65 01Jul27 099724AL0 0.01205 
+15 CANADIAN NATURAL RESOURCES LIMITED BBB,ENRG 1E99BRAF6 CNATUR 2.95 15Jul30 136385BA8 0.01205 
+16 Capital One Financial Corporation BBB,FIN,HVOL 1F444HAG7 COF 3.75 09Mar27 14040HBN4 0.01205 
+17 Cardinal Health, Inc. BBB,CONS 1F55D7AG5 CAH 3.41 15Jun27 14149YBJ6 0.01205 
+18 Conagra Brands, Inc. BBB,CONS,HVOL 225DHNAB8 CONABRA 7 01Oct28 205887AR3 0.01205 
+19 Cox Communications, Inc. BBB,TMT 2E6448AC6 COX-CommInc 6.8 01Aug28 224044AN7 0.01205 
+20 CVS Health Corporation BBB,CONS 138CBKAI3 CVSHEA 5.25 30Jan31 126650DX5 0.01205 
+21 Darden Restaurants, Inc. BBB,CONS 25A8ADAE9 DRI 3.85 01May27 237194AL9 0.01205 
+22 Dell Inc. BBB,HVOL,TMT 26B72TAB8 DELLN 7.1 15Apr28 247025AE9 0.01205 
+23 Delta Air Lines, Inc. BBB,HVOL,INDU 26BA97AG1 DAL 3.75 28Oct29 247361ZT8 0.01205 
+24 Devon Energy Corporation BBB,ENRG 2H68GVAC6 DVN 7.95 15Apr32 251799AA0 0.01205 
+25 Dominion Energy, Inc. BBB,ENRG 27CA3FAC5 DOMINEN 4.25 01Jun28 25746UCY3 0.01205 
+26 DXC TECHNOLOGY COMPANY BBB,HVOL,TMT 2F68AQAD5 DXCTEC 2.375 15Sep28 23355LAM8 0.01205 
+27 Eastman Chemical Company BBB,HVOL,INDU 29EB75AB7 EMN 7.6 01Feb27 277432AD2 0.01205 
+28 Enbridge Inc. BBB,ENRG 2BB75NAE1 ENB 6.2 15Nov30 29250NBY0 0.01205 
+29 ENERGY TRANSFER LP BBB,ENRG 2BB9F4AD0 ENERTRAE 3.75 15May30 29278NAQ6 0.01205 
+30 Exelon Corporation BBB,ENRG 3D177OAH6 EXC 5.125 15Mar31 30161NBR1 0.01205 
+31 Expedia Group, Inc. BBB,CONS,HVOL 3D233NAD9 EXPEGRO (2) 2.95 15Mar31 30212PBH7 0.01205 
+CDX.NA.IG.BBB.46-V1
+Index RED Code: 1D769MAM5
+Effective Date: 20 March 2026
+Annex Date: 20 March 2026
+www.spglobal.com
+Copyright © 2022 S&P Global Market Intelligence, a division of S&P Global Inc. All rights reserved. 1
+No. Reference Entity Sub-Index CLIP Reference Obligation CUSIP/ISIN Weighting Monoline
+32 FedEx Corporation BBB,INDU 3E56A5AE6 FDX (4) 4.25 15May30 31428XCJ3 0.01205 
+33 FirstEnergy Corp. BBB,ENRG 36AGC5AD5 FE 2.65 01Mar30 337932AL1 0.01205 
+34 Ford Motor Company BBB,CONS,HVOL 3H98A7AC1 F 4.346 08Dec26 345370CR9 0.01205 
+35 Freeport-McMoRan Inc. BBB,INDU 38BD8LAC9 FREEPIN 5 01Sep27 35671DCC7 0.01205 
+36 General Mills, Inc. BBB,CONS 3A7367AI1 GIS 4.95 29Mar33 370334CT9 0.01205 
+37 General Motors Company BBB,CONS,HVOL 3A749RAE1 GENMC 4.2 01Oct27 37045VAN0 0.01205 
+38 HALLIBURTON COMPANY BBB,ENRG 4E6837AF1 HAL 2.92 01Mar30 406216BL4 0.01205 
+39 HCA Inc. BBB,CONS 4E452AAQ9 HCA 5.45 01Apr31 404119CT4 0.01205 
+40 Host Hotels & Resorts, L.P. BBB,FIN,HVOL 4I517NAE2 HOSHOT-HSTRES 3.375 15Dec29 44107TAY2 0.01205 
+41 HP Inc. BBB,HVOL,TMT 4E477PAC8 HPINCAA 3 17Jun27 40434LAB1 0.01205 
+42 Intel Corporation BBB,TMT 49D954AD2 INTC 2.45 15Nov29 458140BH2 0.01205 
+43 INTERNATIONAL PAPER COMPANY BBB,INDU 4A615AAH1 IP 5 15Sep35 460146CM3 0.01205 
+44 JOHNSON CONTROLS INTERNATIONAL PUBLIC LIMITED COMPANY BBB,INDU GL6652AD0 JOHCON 1.75 15Sep30 47837RAA8 0.01205 
+45 Kinder Morgan, Inc. BBB,ENRG 4DD9BHAE5 KINDERM 4.3 01Mar28 49456BAP6 0.01205 
+46 Kraft Heinz Foods Company BBB,CONS 5F07CPAA6 KRAFHEI 6.375 15Jul28 423074AF0 0.01205 
+47 Lennar Corporation BBB,CONS,HVOL 5H865CAL9 LEN (4) 4.75 29Nov27 526057CD4 0.01205 
+48 Lincoln National Corporation BBB,FIN,HVOL 5I759FAG0 LNC 3.4 15Jan31 534187BK4 0.01205 
+49 Lowe's Companies, Inc. BBB,CONS 59CEC7AG9 LOW 3.75 01Apr32 548661EH6 0.01205 
+50 Marathon Petroleum Corporation BBB,ENRG 5BBDDFAC7 MARAPET (4) 5.125 15Dec26 56585ABC5 0.01205 
+51 McDONALD'S CORPORATION BBB,CONS 5D8148AG0 MCD 3.5 01Jul27 58013MFP4 0.01205 
+52 Mondelez International, Inc. BBB,CONS 669B27AG5 MONDINT 4.125 07May28 609207AM7 0.01205 
+53 Motorola Solutions, Inc. BBB,TMT 6I209OAG6 MOTSOL 2.3 15Nov30 620076BT5 0.01205 
+54 Northrop Grumman Corporation BBB,INDU 6CCE9HAC2 NORGRM 4.4 01May30 666807BS0 0.01205 
+55 OCCIDENTAL PETROLEUM CORPORATION BBB,ENRG,HVOL 6DB9EIAG5 OXY 6.125 01Jan31 674599EF8 0.01205 
+56 Omnicom Group Inc. BBB,HVOL,TMT 6E9AAAAF6 OMC 2.45 30Apr30 681919BB1 0.01205 
+57 Oracle Corporation BBB,HVOL,TMT 6EC42LAD6 ORCLE 3.25 15Nov27 68389XBN4 0.01205 
+58 Ovintiv Inc. BBB,ENRG,HVOL 6F94BXAB5 OVININC 8.125 15Sep30 012873AH8 0.01205 
+59 PulteGroup, Inc. BBB,CONS 7B9DFMAD9 PHMG 7.875 15Jun32 745867AM3 0.01205 
+60 Quest Diagnostics Incorporated BBB,CONS 7BCB7PAE9 DGX 4.2 30Jun29 74834LBA7 0.01205 
+61 Radian Group Inc. BBB,FIN,HVOL 7C5259AH6 RDN 4.875 15Mar27 750236AW1 0.01205 
+62 ROYAL CARIBBEAN CRUISES LTD. BBB,CONS,HVOL 7F8168AI7 RCL 3.7 15Mar28 780153AW2 0.01205 
+CDX.NA.IG.BBB.46-V1
+Index RED Code: 1D769MAM5
+Effective Date: 20 March 2026
+Annex Date: 20 March 2026
+www.spglobal.com
+Copyright © 2022 S&P Global Market Intelligence, a division of S&P Global Inc. All rights reserved. 2
+No. Reference Entity Sub-Index CLIP Reference Obligation CUSIP/ISIN Weighting Monoline
+63 RTX Corporation BBB,INDU 7BDHBKAA9 RTXCOR 3.125 04May27 913017CR8 0.01205 
+64 Ryder System, Inc. BBB,INDU 7FB89DAH6 R 5.25 01Jun28 78355HKW8 0.01205 
+65 Sempra BBB,ENRG 897ECJAA9 SEMPRAAA 3.25 15Jun27 816851BA6 0.01205 
+66 Southwest Airlines Co. BBB,HVOL,INDU 8C8BB5AE0 LUV 5.125 15Jun27 844741BK3 0.01205 
+67 T-Mobile USA, Inc. BBB,TMT 8F97DOAL2 DT-TMobileUS 5.2 15Jan33 87264ACV5 0.01205 
+68 The AES Corporation BBB,ENRG,HVOL 0A143HAJ7 AES (2) 2.45 15Jan31 00130HCG8 0.01205 
+69 The Allstate Corporation BBB,FIN 0C2002AG2 ALL 1.45 15Dec30 020002BJ9 0.01204 
+70 THE BOEING COMPANY BBB,INDU 09G725AJ4 BA 5.15 01May30 097023CY9 0.01204 
+71 The Campbell's Company BBB,CONS 1E78ALAB3 TCAMPB 4.15 15Mar28 134429BG3 0.01204 
+72 The Cigna Group BBB,CONS 1I899FAA8 THECIG 2.4 15Mar30 125523CL2 0.01204 
+73 The Dow Chemical Company BBB,HVOL,INDU 2I6597AB3 DOW 7.375 01Nov29 260543BJ1 0.01204 
+74 THE KROGER CO. BBB,CONS 5F1148AH0 KR 4.5 15Jan29 501044DL2 0.01204 
+75 The Sherwin-Williams Company BBB,INDU 8A677CAD7 SHW 2.95 15Aug29 824348BJ4 0.01204 
+76 THE SOUTHERN COMPANY BBB,ENRG 8C67DFAI8 SO 4.85 15Mar35 842587EA1 0.01204 
+77 THE WILLIAMS COMPANIES, INC. BBB,ENRG 9FFD9CAG3 WMB 3.5 15Nov30 969457BX7 0.01204 
+78 Toll Brothers, Inc. BBB,CONS,HVOL 8GHDBFAE5 TOL-FinCorp 4.35 15Feb28 88947EAT7 0.01204 
+79 TRANSCANADA PIPELINES LIMITED BBB,ENRG 8HC878AF7 TRP 4.625 01Mar34 89352HAM1 0.01204 
+80 Tyson Foods, Inc. BBB,CONS 9J26DDAG7 TSN 3.55 02Jun27 902494BC6 0.01204 
+81 Valero Energy Corporation BBB,ENRG 9AAA4IAB8 VLOC 8.75 15Jun30 91913YAB6 0.01204 
+82 Verizon Communications Inc. BBB,TMT 9B579LAD3 VRZN 4.125 16Mar27 92343VDY7 0.01204 
+83 Weyerhaeuser Company BBB,INDU 9F837CAF7 WY (5) 7.375 15Mar32 962166BR4 0.01204 
+CDX.NA.IG.BBB.46-V1
+Index RED Code: 1D769MAM5
+Effective Date: 20 March 2026
+Annex Date: 20 March 2026
+www.spglobal.com
+Copyright © 2022 S&P Global Market Intelligence, a division of S&P Global Inc. All rights reserved. 3
+Disclaimer
+Copyright © 2022 S&P Global Market Intelligence, a division of S&P Global Inc. All rights reserved.
+These materials, including any software, data, processing technology, index data, ratings, credit-related analysis, research, model, software or other application or output described herein, or any part thereof (collectively the "Property") constitute the proprietary
+and confidential information of S&P Global Market Intelligence or its affiliates (each and together "S&P Global") and/or its third party provider licensors. S&P Global on behalf of itself and its third-party licensors reserves all rights in and to the Property.
+These materials have been prepared solely for information purposes based upon information generally available to the public and from sources believed to be reliable.
+Any copying, reproduction, reverse-engineering, modification, distribution, transmission or disclosure of the Property, in any form or by any means, is strictly prohibited without the prior written consent of S&P Global. The Property shall not be used for any
+unauthorized or unlawful purposes. S&P Global Market Intelligence's opinions, statements, estimates, projections, quotes and credit-related and other analyses are statements of opinion as of the date they are expressed and not statements of fact or
+recommendations to purchase, hold, or sell any securities or to make any investment decisions, and do not address the suitability of any security, and there is no obligation on S&P Global Market Intelligence to update the foregoing or any other element of the
+Property. S&P Global Market Intelligence may provide index data. Direct investment in an index is not possible. Exposure to an asset class represented by an index is available through investable instruments based on that index. The Property and its composition
+and content are subject to change without notice.
+THE PROPERTY IS PROVIDED ON AN "AS IS" BASIS. NEITHER S&P GLOBAL NOR ANY THIRD PARTY PROVIDERS (TOGETHER, "S&P GLOBAL PARTIES") MAKE ANY WARRANTY, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, FREEDOM FROM BUGS, SOFTWARE ERRORS OR DEFECTS, THAT THE PROPERTY'S FUNCTIONING WILL BE UNINTERRUPTED OR THAT THE PROPERTY WILL OPERATE IN ANY SOFTWARE OR
+HARDWARE CONFIGURATION, NOR ANY WARRANTIES, EXPRESS OR IMPLIED, AS TO ITS ACCURACY, AVAILABILITY, COMPLETENESS OR TIMELINESS, OR TO THE RESULTS TO BE OBTAINED FROM THE USE OF THE PROPERTY. S&P GLOBAL PARTIES
+SHALL NOT IN ANY WAY BE LIABLE TO ANY RECIPIENT FOR ANY INACCURACIES, ERRORS OR OMISSIONS REGARDLESS OF THE CAUSE. Without limiting the foregoing, S&P Global Parties shall have no liability whatsoever to any recipient, whether in contract,
+in tort (including negligence), under warranty, under statute or otherwise, in respect of any loss or damage suffered by any recipient as a result of or in connection with the Property, or any course of action determined, by it or any third party, whether or not based
+on or relating to the Property. In no event shall S&P Global be liable to any party for any direct, indirect, incidental, exemplary, compensatory, punitive, special or consequential damages, costs, expenses, legal fees or losses (including without limitation lost income
+or lost profits and opportunity costs or losses caused by negligence) in connection with any use of the Property even if advised of the possibility of such damages. The Property should not be relied on and is not a substitute for the skill, judgment and experience of
+the user, its management, employees, advisors and/or clients when making investment and other business decisions.
+The S&P Global logo is a registered trademark of S&P Global, and the trademarks of S&P Global used within this document or materials are protected by international laws. Any other names may be trademarks of their respective owners.
+The inclusion of a link to an external website by S&P Global should not be understood to be an endorsement of that website or the website's owners (or their products/services). S&P Global is not responsible for either the content or output of external websites.
+S&P Global keeps certain activities of its divisions separate from each other in order to preserve the independence and objectivity of their respective activities. As a result, certain divisions of S&P Global may have information that is not available to other S&P
+Global divisions. S&P Global has established policies and procedures to maintain the confidentiality of certain nonpublic information received in connection with each analytical process. S&P Global may receive compensation for its ratings and certain analyses,
+normally from issuers or underwriters of securities or from obligors. S&P Global reserves the right to disseminate its opinions and analyses. S&P Global Ratings' public ratings and analyses are made available on its sites, www.spglobal.com/ratings (free of charge)
+and www.capitaliq.com (subscription), and may be distributed through other means, including via S&P Global publications and third party redistributors.
+Copyright © 2022 S&P Global Market Intelligence, a division of S&P Global Inc. All rights reserved. 4
