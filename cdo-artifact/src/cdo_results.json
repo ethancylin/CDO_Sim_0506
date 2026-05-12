@@ -1,0 +1,1088 @@
+{
+  "firms": [
+    "Verizon Communications Inc.",
+    "CANADIAN NATURAL RESOURCES LIMITED",
+    "Amgen Inc.",
+    "General Mills, Inc.",
+    "FedEx Corporation",
+    "ENERGY TRANSFER LP",
+    "Conagra Brands, Inc.",
+    "BorgWarner Inc.",
+    "THE BOEING COMPANY",
+    "Best Buy Co., Inc."
+  ],
+  "scenarios": {
+    "-1.0": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9846637950655024,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.0,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.0,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.0,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.0,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.015336204934497649,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.015336204934497649,
+          "probability_of_default": 0.015336204934497649,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.015336204934497649,
+          "probability_of_default": 0.015336204934497649,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.015336204934497649,
+          "probability_of_default": 0.015336204934497649,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.008520113852498694,
+          "probability_of_default": 0.015336204934497649,
+          "size": 0.9
+        }
+      ]
+    },
+    "-0.8": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9412743086883326,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.02674270031659927,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.010835540305108821,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.006237653107140238,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.004148741243056235,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0029863291500209226,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.002259751206291156,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0017710494259615991,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.0014282685617552132,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.001191941986626336,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.0011237160091077253,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.05872569131166751,
+          "probability_of_default": 0.05872569131166751,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.05872569131166751,
+          "probability_of_default": 0.05872569131166751,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.03198299099506824,
+          "probability_of_default": 0.03198299099506824,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.005196820356428106,
+          "probability_of_default": 0.03198299099506824,
+          "size": 0.9
+        }
+      ]
+    },
+    "-0.6": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9139496805918593,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.052206752604052234,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.016696577312623452,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.007662044377528902,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.004081498693743833,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0023398545493934003,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0013874421118205227,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0008266291664128229,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.0004798067066130988,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.0002579665770746724,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.00011174730887780583,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.08605031940814076,
+          "probability_of_default": 0.08605031940814076,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.08605031940814076,
+          "probability_of_default": 0.08605031940814076,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.03384356680408852,
+          "probability_of_default": 0.03384356680408852,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0032924862251641923,
+          "probability_of_default": 0.03384356680408852,
+          "size": 0.9
+        }
+      ]
+    },
+    "-0.4": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.8897795915238658,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.08006108099590359,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.019460214635533594,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.006507180739367653,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0024995601021059865,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0010194315238750728,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0004203898358183382,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.00016796822145484367,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 6.169254797270628e-05,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 1.9015428332523208e-05,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 3.874445769961719e-06,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.11022040847613428,
+          "probability_of_default": 0.11022040847613428,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.11022040847613428,
+          "probability_of_default": 0.11022040847613428,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.03015932748023068,
+          "probability_of_default": 0.03015932748023068,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0018448909318768596,
+          "probability_of_default": 0.03015932748023068,
+          "size": 0.9
+        }
+      ]
+    },
+    "-0.2": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.8687535853655584,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.10961571086571745,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.01753850841400755,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0032680748461970796,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0006569190642749375,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.00013461955374610704,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 2.6789531314576984e-05,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 4.915944425210348e-06,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 7.762241897588852e-07,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 9.36986745454018e-08,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 6.491894446332237e-09,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.13124641463444162,
+          "probability_of_default": 0.13124641463444162,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.13124641463444162,
+          "probability_of_default": 0.13124641463444162,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.021630703768724214,
+          "probability_of_default": 0.021630703768724214,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0008222072829306874,
+          "probability_of_default": 0.021630703768724214,
+          "size": 0.9
+        }
+      ]
+    },
+    "0.0": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.8527733248911603,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.1369012246827915,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.009889938096877144,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0004233855501745146,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 1.1894544261659555e-05,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 2.2914098679238492e-07,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 3.065457216791712e-09,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 2.8121011423525477e-11,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 1.692918031745463e-13,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 6.039446567223992e-16,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 9.69551470860995e-19,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.14722667510883972,
+          "probability_of_default": 0.14722667510883972,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.14722667510883972,
+          "probability_of_default": 0.14722667510883972,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.010325450426048237,
+          "probability_of_default": 0.010325450426048237,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0002593127515863243,
+          "probability_of_default": 0.010325450426048237,
+          "size": 0.9
+        }
+      ]
+    },
+    "0.2": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.8687535853655584,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.10961571086571745,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.01753850841400753,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0032680748461970804,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0006569190642749375,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.00013461955374610696,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 2.6789531314576974e-05,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 4.915944425210346e-06,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 7.762241897588858e-07,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 9.369867454540177e-08,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 6.491894446332238e-09,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.1312464146344416,
+          "probability_of_default": 0.1312464146344416,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.1312464146344416,
+          "probability_of_default": 0.1312464146344416,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.021630703768724193,
+          "probability_of_default": 0.021630703768724193,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0008222072829306871,
+          "probability_of_default": 0.021630703768724193,
+          "size": 0.9
+        }
+      ]
+    },
+    "0.4": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.8897795915238658,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.08006108099590355,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.019460214635533588,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.006507180739367649,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.002499560102105987,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0010194315238750726,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0004203898358183383,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.00016796822145484361,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 6.169254797270625e-05,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 1.9015428332523215e-05,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 3.874445769961717e-06,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.11022040847613422,
+          "probability_of_default": 0.11022040847613422,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.11022040847613422,
+          "probability_of_default": 0.11022040847613422,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.03015932748023067,
+          "probability_of_default": 0.03015932748023067,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0018448909318768592,
+          "probability_of_default": 0.03015932748023067,
+          "size": 0.9
+        }
+      ]
+    },
+    "0.6": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9139496805918593,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.052206752604052206,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.01669657731262344,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0076620443775289,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0040814986937438335,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0023398545493934025,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.001387442111820524,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0008266291664128231,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.00047980670661309876,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.0002579665770746726,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.00011174730887780585,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.08605031940814073,
+          "probability_of_default": 0.08605031940814073,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.08605031940814073,
+          "probability_of_default": 0.08605031940814073,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.0338435668040885,
+          "probability_of_default": 0.0338435668040885,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.0032924862251641927,
+          "probability_of_default": 0.0338435668040885,
+          "size": 0.9
+        }
+      ]
+    },
+    "0.8": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9412743086883326,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.02674270031659925,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.010835540305108813,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.006237653107140237,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.004148741243056237,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0029863291500209247,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0022597512062911573,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0017710494259615991,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.0014282685617552132,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.0011919419866263366,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.0011237160091077253,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.058725691311667494,
+          "probability_of_default": 0.058725691311667494,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.058725691311667494,
+          "probability_of_default": 0.058725691311667494,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.03198299099506824,
+          "probability_of_default": 0.03198299099506824,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.005196820356428108,
+          "probability_of_default": 0.03198299099506824,
+          "size": 0.9
+        }
+      ]
+    },
+    "1.0": {
+      "distribution": [
+        {
+          "defaults": 0,
+          "probability": 0.9846637950655024,
+          "portfolio_loss": 0.0
+        },
+        {
+          "defaults": 1,
+          "probability": 0.0,
+          "portfolio_loss": 0.06
+        },
+        {
+          "defaults": 2,
+          "probability": 0.0,
+          "portfolio_loss": 0.12
+        },
+        {
+          "defaults": 3,
+          "probability": 0.0,
+          "portfolio_loss": 0.18
+        },
+        {
+          "defaults": 4,
+          "probability": 0.0,
+          "portfolio_loss": 0.24
+        },
+        {
+          "defaults": 5,
+          "probability": 0.0,
+          "portfolio_loss": 0.3
+        },
+        {
+          "defaults": 6,
+          "probability": 0.0,
+          "portfolio_loss": 0.36
+        },
+        {
+          "defaults": 7,
+          "probability": 0.0,
+          "portfolio_loss": 0.42
+        },
+        {
+          "defaults": 8,
+          "probability": 0.0,
+          "portfolio_loss": 0.48
+        },
+        {
+          "defaults": 9,
+          "probability": 0.0,
+          "portfolio_loss": 0.54
+        },
+        {
+          "defaults": 10,
+          "probability": 0.01533620493449762,
+          "portfolio_loss": 0.6
+        }
+      ],
+      "tranches": [
+        {
+          "name": "Equity",
+          "lower": 0.0,
+          "upper": 0.03,
+          "color": "#ff6b8a",
+          "expected_loss": 0.01533620493449762,
+          "probability_of_default": 0.01533620493449762,
+          "size": 0.03
+        },
+        {
+          "name": "Mezzanine",
+          "lower": 0.03,
+          "upper": 0.06,
+          "color": "#ffb74d",
+          "expected_loss": 0.01533620493449762,
+          "probability_of_default": 0.01533620493449762,
+          "size": 0.03
+        },
+        {
+          "name": "Senior",
+          "lower": 0.06,
+          "upper": 0.1,
+          "color": "#5dd3ff",
+          "expected_loss": 0.01533620493449762,
+          "probability_of_default": 0.01533620493449762,
+          "size": 0.04000000000000001
+        },
+        {
+          "name": "Super Senior",
+          "lower": 0.1,
+          "upper": 1.0,
+          "color": "#9aa6c2",
+          "expected_loss": 0.008520113852498679,
+          "probability_of_default": 0.01533620493449762,
+          "size": 0.9
+        }
+      ]
+    }
+  },
+  "assumptions": {
+    "default_rate": 0.0158,
+    "recovery_rate": 0.4,
+    "loss_per_default": 0.06
+  }
+}
