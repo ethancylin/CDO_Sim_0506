@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaussian Copula & CDO Tranche Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a;
+  --bg-2:#0f1525;
+  --panel:#131a2e;
+  --panel-2:#1a2340;
+  --border:#243056;
+  --ink:#e8edf7;
+  --ink-dim:#9aa6c2;
+  --ink-mute:#6b7794;
+  --accent:#5dd3ff;
+  --accent-2:#ffb74d;
+  --good:#52e3a4;
+  --bad:#ff6b8a;
+  --warn:#ffcb6b;
+  --grid:rgba(93,211,255,.07);
+  --serif:'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --mono:'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --sans:'Inter Tight', 'Helvetica Neue', system-ui, sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(93,211,255,.08), transparent 40%),
+    radial-gradient(circle at 80% 100%, rgba(255,183,77,.06), transparent 40%),
+    linear-gradient(180deg, #0a0e1a 0%, #0c1224 100%);
+  min-height:100vh;
+}
+
+/* ---------- Header ---------- */
+.masthead{
+  border-bottom:1px solid var(--border);
+  padding:28px 40px 22px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  background:linear-gradient(180deg, rgba(19,26,46,.6), transparent);
+}
+.brand{display:flex;flex-direction:column;gap:4px}
+.brand .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.brand h1{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.1;letter-spacing:-.01em}
+.brand h1 em{font-style:italic;color:var(--accent-2)}
+.meta{font-family:var(--mono);font-size:11px;color:var(--ink-mute);text-align:right;line-height:1.7}
+.meta .pill{display:inline-block;padding:3px 9px;border:1px solid var(--border);border-radius:99px;color:var(--ink-dim);margin-left:6px}
+
+/* ---------- Layout ---------- */
+.container{padding:32px 40px 80px;max-width:1600px;margin:0 auto}
+.section{margin-bottom:48px}
+.section-head{margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.section-head .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.2em}
+.section-head h2{font-family:var(--serif);font-size:28px;font-weight:500;letter-spacing:-.01em}
+.section-head h2 em{font-style:italic;color:var(--ink-dim);font-weight:400}
+.section-head .sub{font-size:13px;color:var(--ink-dim);max-width:560px}
+
+/* ---------- Panels ---------- */
+.grid{display:grid;gap:20px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-5050{grid-template-columns:5fr 4fr}
+.grid-3070{grid-template-columns:3fr 7fr}
+
+.panel{
+  background:linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.panel::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:.4;
+}
+.panel h3{font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-.005em}
+.panel .desc{font-size:12px;color:var(--ink-dim);margin-bottom:16px;line-height:1.6}
+.panel.compact{padding:16px}
+
+/* ---------- Stats ---------- */
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat .label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--ink-mute);text-transform:uppercase}
+.stat .value{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.stat .value.mono{font-family:var(--mono);font-size:22px;font-weight:500}
+.stat .delta{font-family:var(--mono);font-size:11px;color:var(--ink-dim)}
+.stat.good .value{color:var(--good)}
+.stat.bad .value{color:var(--bad)}
+.stat.accent .value{color:var(--accent)}
+.stat.warn .value{color:var(--warn)}
+
+/* ---------- Controls ---------- */
+.control-row{display:flex;flex-direction:column;gap:14px}
+.control{display:flex;flex-direction:column;gap:6px}
+.control label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-mute);display:flex;justify-content:space-between;align-items:center}
+.control label .val{color:var(--accent);font-size:12px;letter-spacing:0;text-transform:none}
+.control input[type="range"]{
+  -webkit-appearance:none;width:100%;height:3px;background:var(--border);border-radius:2px;outline:none;
+}
+.control input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;background:var(--accent);
+  border-radius:50%;cursor:pointer;box-shadow:0 0 0 4px rgba(93,211,255,.15)
+}
+.control input[type="range"]::-moz-range-thumb{
+  width:14px;height:14px;background:var(--accent);border:none;border-radius:50%;cursor:pointer
+}
+.control select, .control input[type="number"]{
+  background:var(--bg-2);border:1px solid var(--border);color:var(--ink);
+  padding:7px 10px;font-family:var(--mono);font-size:12px;border-radius:4px;outline:none
+}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{
+  background:transparent;border:1px solid var(--border);color:var(--ink-dim);
+  padding:8px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .15s
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:#7ddfff;color:var(--bg)}
+.btn.warn{border-color:var(--warn);color:var(--warn)}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);font-weight:500;color:var(--ink-mute);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+td{padding:9px 10px;border-bottom:1px solid rgba(36,48,86,.4)}
+tr:hover td{background:rgba(93,211,255,.03)}
+td.num{text-align:right}
+td.accent{color:var(--accent)}
+td.good{color:var(--good)}
+td.bad{color:var(--bad)}
+
+/* ---------- Math display ---------- */
+.eq{font-family:var(--mono);background:var(--bg-2);border-left:2px solid var(--accent);padding:10px 14px;margin:10px 0;font-size:12px;color:var(--ink-dim);overflow-x:auto;border-radius:0 3px 3px 0}
+.eq strong{color:var(--accent);font-weight:500}
+.eq em{color:var(--accent-2);font-style:normal}
+
+/* ---------- Step indicator ---------- */
+.steps{display:flex;gap:4px;margin-bottom:18px}
+.step-pill{
+  flex:1;padding:10px 12px;background:var(--bg-2);border:1px solid var(--border);
+  border-radius:3px;font-family:var(--mono);font-size:11px;color:var(--ink-mute);
+  cursor:pointer;transition:all .15s;text-align:center;letter-spacing:.05em
+}
+.step-pill:hover{border-color:var(--ink-dim);color:var(--ink-dim)}
+.step-pill.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+
+/* ---------- Walkthrough ---------- */
+.walk{background:var(--bg-2);border:1px solid var(--border);border-radius:4px;padding:18px;margin-top:14px}
+.walk h4{font-family:var(--serif);font-size:16px;margin-bottom:8px;color:var(--accent)}
+.walk p{font-size:13px;color:var(--ink-dim);margin-bottom:8px;line-height:1.65}
+.walk .calc{font-family:var(--mono);font-size:12px;background:var(--bg);padding:10px;border-radius:3px;margin:8px 0;border:1px solid var(--border)}
+.walk .calc .arrow{color:var(--accent);margin:0 6px}
+.walk .calc .res{color:var(--good)}
+
+/* ---------- Heatmap ---------- */
+.heatmap{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;font-family:var(--mono);font-size:10px}
+.heatcell{padding:8px 4px;text-align:center;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+
+/* ---------- Tranche viz ---------- */
+.tranche-stack{display:flex;flex-direction:column-reverse;gap:2px;margin:14px 0}
+.tranche-bar{
+  padding:10px 14px;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11px;border-radius:2px;position:relative;overflow:hidden;
+}
+.tranche-bar .name{font-weight:600;letter-spacing:.05em}
+.tranche-bar .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(255,107,138,.25);z-index:0}
+.tranche-bar .content{position:relative;z-index:1;display:flex;justify-content:space-between;width:100%}
+
+/* ---------- Chart wrapper ---------- */
+.chart-wrap{position:relative;height:280px;width:100%}
+.chart-wrap.tall{height:340px}
+.chart-wrap.short{height:200px}
+
+/* ---------- 3D surface wrapper ---------- */
+.surface-wrap{position:relative;height:300px;width:100%;background:var(--bg-2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.surface-wrap.tall{height:380px}
+.surface-pair{display:flex;flex-direction:column;gap:8px}
+.surface-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-mute);text-align:center;
+  padding:4px 0;background:var(--bg-2);border-radius:3px 3px 0 0;
+  border:1px solid var(--border);border-bottom:none;
+}
+.surface-label.threed{color:var(--accent)}
+.surface-label.contour{color:var(--accent-2)}
+
+/* ---------- Caption ---------- */
+.caption{font-size:11px;color:var(--ink-mute);margin-top:8px;font-style:italic;text-align:center}
+
+/* ---------- Footer ---------- */
+.footer{border-top:1px solid var(--border);padding:24px 40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.15em;text-transform:uppercase}
+
+/* ---------- Concept cards ---------- */
+.concept{padding:16px;background:var(--bg-2);border-left:2px solid var(--ink-mute);margin-bottom:10px;border-radius:0 3px 3px 0}
+.concept h5{font-family:var(--serif);font-size:14px;color:var(--accent);margin-bottom:4px;font-weight:600}
+.concept p{font-size:12px;color:var(--ink-dim);line-height:1.6}
+
+/* ---------- Hero quote ---------- */
+.hero-quote{
+  font-family:var(--serif);font-style:italic;font-size:18px;
+  color:var(--ink-dim);padding:20px 30px;border-left:2px solid var(--accent-2);
+  margin:20px 0;background:rgba(255,183,77,.04)
+}
+.hero-quote .attr{display:block;font-size:11px;font-family:var(--mono);font-style:normal;color:var(--ink-mute);margin-top:8px;letter-spacing:.1em}
+
+/* responsive */
+@media (max-width:1100px){
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3070,.grid-5050{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .container{padding:20px}
+  .masthead{padding:20px;flex-direction:column;align-items:flex-start;gap:14px}
+  .meta{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="brand">
+    <span class="eyebrow">Quantitative Credit Risk · Module 07</span>
+    <h1>The Gaussian Copula <em>&amp; the Anatomy of a CDO</em></h1>
+  </div>
+  <div class="meta">
+    Default Correlation Modeling<br>
+    <span class="pill">Li (2000)</span><span class="pill">One-factor model</span><span class="pill">Monte Carlo</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero-quote">
+    A copula separates the marginal behavior of each asset from the dependence structure that binds them. In credit, this is everything — a portfolio of 100 single-B obligors behaves nothing like the same 100 names if their defaults move together.
+    <span class="attr">— After Sklar's theorem (1959); operationalized for credit by David X. Li (2000)</span>
+  </div>
+
+  <!-- ============ SECTION 1: FOUNDATIONS ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">01 — FOUNDATIONS</span>
+        <h2>From bivariate normal <em>to copula</em></h2>
+      </div>
+      <div class="sub">A bivariate normal mixes the marginals and the dependence into one object. A copula isolates the dependence by feeding it uniform inputs F(x), F(y) ∈ [0,1].</div>
+    </div>
+
+    <div class="grid grid-3070">
+      <div class="panel">
+        <h3>Compare the surfaces</h3>
+        <p class="desc">Slide ρ to see how correlation reshapes the joint behavior. Both surfaces describe the same statistical fact — but the copula is shape-agnostic.</p>
+
+        <div class="control-row">
+          <div class="control">
+            <label>Correlation ρ <span class="val" id="rhoLabel">0.70</span></label>
+            <input type="range" id="rhoSlider" min="-0.95" max="0.95" step="0.05" value="0.70">
+          </div>
+          <div class="control">
+            <label>View mode</label>
+            <select id="surfaceMode">
+              <option value="density">Density f(x,y) / c[F(x),F(y)]</option>
+              <option value="dist">Distribution F(x,y) / C[F(x),F(y)]</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="walk" style="margin-top:18px">
+          <h4>Why the change of variable matters</h4>
+          <p>The bivariate normal density lives on (−∞, +∞)². Its shape changes when you swap normal marginals for t-distributions or lognormals.</p>
+          <p>The copula density lives on the unit square [0,1]². Its shape depends <em>only</em> on the dependence parameter ρ — not on what the marginals look like.</p>
+          <div class="eq">C(u,v) = <strong>Φ<sub>ρ</sub></strong>[ Φ⁻¹(u), Φ⁻¹(v) ]</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Bivariate normal vs Gaussian copula</h3>
+        <div class="grid grid-2" style="gap:12px">
+          <div>
+            <div class="caption" style="text-align:left;margin-bottom:6px;color:var(--ink-dim)">Bivariate Normal Distribution</div>
+            <div class="surface-pair">
+              <div class="surface-label threed">3-D Surface (rotate · drag)</div>
+              <div class="surface-wrap" id="bivarSurface3D"></div>
+              <div class="surface-label contour">Contour view</div>
+              <div class="chart-wrap"><canvas id="bivarChart"></canvas></div>
+            </div>
+          </div>
+          <div>
+            <div class="caption" style="text-align:left;margin-bottom:6px;color:var(--ink-dim)">Gaussian Copula</div>
+            <div class="surface-pair">
+              <div class="surface-label threed">3-D Surface (rotate · drag)</div>
+              <div class="surface-wrap" id="copulaSurface3D"></div>
+              <div class="surface-label contour">Contour view</div>
+              <div class="chart-wrap"><canvas id="copulaChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="caption">3-D surface above the contour for each. Density mode shows the bivariate normal "bell" and the copula's corner spikes; distribution mode shows the smooth CDF climbing to 1.</div>
+      </div>
+    </div>
+
+    <!-- ============ DERIVATION SUBSECTION ============ -->
+    <div style="margin-top:36px;padding-top:24px;border-top:1px dashed var(--border)">
+      <div class="section-head" style="border-bottom:none;margin-bottom:16px">
+        <div>
+          <span class="num">01b — DERIVATION</span>
+          <h2>How the copula equation <em>is built — five conceptual stages</em></h2>
+        </div>
+        <div class="sub">From a single random variable's density to the multivariate dependence object: each step is a coordinate change designed to strip out marginal shape until only the pure dependence remains.</div>
+      </div>
+
+      <!-- Stage navigator -->
+      <div class="steps" id="derivSteps">
+        <div class="step-pill active" data-stage="1">① Density f(x)</div>
+        <div class="step-pill" data-stage="2">② CDF F(x)</div>
+        <div class="step-pill" data-stage="3">③ Joint density f(x,y)</div>
+        <div class="step-pill" data-stage="4">④ Joint CDF F(x,y)</div>
+        <div class="step-pill" data-stage="5">⑤ Copula C(u,v)</div>
+      </div>
+
+      <div class="grid grid-2">
+        <!-- LEFT: chart panel -->
+        <div class="panel">
+          <h3 id="derivChartTitle">Stage 1 — Probability density f(x)</h3>
+          <p class="desc" id="derivChartDesc">Three normal densities. Shaded region under one curve = P(X ≤ x₂). Adjust threshold to see how area changes.</p>
+
+          <!-- 3D surface (only shown for stages 3, 4, 5) -->
+          <div id="derivSurfaceContainer" style="display:none">
+            <div class="surface-label threed">3-D Surface (rotate · drag)</div>
+            <div class="surface-wrap tall" id="derivSurface3D"></div>
+            <div class="surface-label contour" style="margin-top:8px">Contour view</div>
+          </div>
+
+          <div class="chart-wrap tall"><canvas id="derivChart"></canvas></div>
+          <div class="caption" id="derivCaption">f(x) = (1/σ√2π) · exp[−(x−μ)²/2σ²]</div>
+
+          <!-- threshold slider only meaningful for stages 1 and 2 -->
+          <div class="control" style="margin-top:14px" id="thresholdControl">
+            <label>Threshold x₂ <span class="val" id="threshLabel">−1.50</span></label>
+            <input type="range" id="derivThresh" min="-3.5" max="3.5" step="0.05" value="-1.50">
+          </div>
+          <div class="control" id="rhoControlDeriv" style="display:none">
+            <label>Correlation ρ <span class="val" id="rhoDerivLabel">0.70</span></label>
+            <input type="range" id="rhoDeriv" min="-0.95" max="0.95" step="0.05" value="0.70">
+          </div>
+        </div>
+
+        <!-- RIGHT: derivation text -->
+        <div class="panel">
+          <h3 id="derivMathTitle">Mathematics</h3>
+          <div id="derivMathBody"></div>
+        </div>
+      </div>
+
+      <!-- Sklar's theorem — full statement -->
+      <div class="panel" style="margin-top:18px">
+        <h3>Sklar's Theorem (1959) — the foundation</h3>
+        <p class="desc">Every multivariate distribution can be split cleanly into its marginal distributions and a copula that captures the dependence. This is the theoretical license to do everything that follows.</p>
+
+        <div class="walk">
+          <h4>Statement</h4>
+          <p>Let H be a joint distribution function with continuous marginals F<sub>X</sub> and F<sub>Y</sub>. Then there exists a <strong>unique</strong> function C: [0,1]² → [0,1] — the copula — such that for all (x,y) ∈ ℝ²:</p>
+          <div class="eq" style="font-size:14px">H(x,y) = <strong>C</strong>( F<sub>X</sub>(x), F<sub>Y</sub>(y) )</div>
+          <p>Conversely, if C is any copula and F<sub>X</sub>, F<sub>Y</sub> are univariate distribution functions, then the function H defined above is a joint distribution function with marginals F<sub>X</sub> and F<sub>Y</sub>.</p>
+        </div>
+
+        <div class="walk">
+          <h4>Why it matters — the separation principle</h4>
+          <p>Sklar lets you build any joint distribution in two completely independent steps:</p>
+          <p>① <strong>Choose marginals</strong> for X and Y separately — they don't have to be from the same family. X could be t with df=8, Y could be lognormal, Z could be a generalized extreme value. Whatever fits the data.</p>
+          <p>② <strong>Choose a copula</strong> to bind them together. The copula governs the dependence structure (linear correlation, tail dependence, asymmetry) without being tied to any particular marginal shape.</p>
+          <p>This separation is what makes copulas the lingua franca of credit portfolio modeling: every CDS gives you an obligor's marginal default probability, and the copula glues 125 of them into a joint distribution.</p>
+        </div>
+      </div>
+
+      <!-- The Gaussian copula derivation — fully step-through -->
+      <div class="panel" style="margin-top:18px">
+        <h3>Constructing the Gaussian copula explicitly</h3>
+        <p class="desc">Apply Sklar's theorem to the bivariate normal distribution. The marginals are univariate normals; what's left over after stripping them out is the copula.</p>
+
+        <div class="walk">
+          <h4>Step 1 — Start with a bivariate standard normal</h4>
+          <p>Let (X,Y) be jointly standard normal with correlation ρ. Its joint distribution function is the bivariate standard normal CDF, denoted Φ<sub>ρ</sub>:</p>
+          <div class="eq" style="font-size:14px">Φ<sub>ρ</sub>(x,y) = <strong>P</strong>(X ≤ x, Y ≤ y) = ∫<sub>−∞</sub><sup>x</sup> ∫<sub>−∞</sub><sup>y</sup> φ<sub>ρ</sub>(s,t) ds dt</div>
+          <p>The marginals are individually standard normal, F<sub>X</sub>(x) = Φ(x) and F<sub>Y</sub>(y) = Φ(y).</p>
+        </div>
+
+        <div class="walk">
+          <h4>Step 2 — Apply Sklar's identity</h4>
+          <p>By Sklar, there exists a unique copula C<sup>Ga</sup> such that:</p>
+          <div class="eq" style="font-size:14px">Φ<sub>ρ</sub>(x,y) = C<sup>Ga</sup>( Φ(x), Φ(y) )</div>
+          <p>Now substitute u = Φ(x) and v = Φ(y), which means x = Φ⁻¹(u) and y = Φ⁻¹(v):</p>
+          <div class="eq" style="font-size:14px">Φ<sub>ρ</sub>( Φ⁻¹(u), Φ⁻¹(v) ) = C<sup>Ga</sup>(u, v)</div>
+        </div>
+
+        <div class="walk">
+          <h4>Step 3 — Read off the Gaussian copula</h4>
+          <p>This gives the explicit formula for the bivariate Gaussian copula with parameter ρ:</p>
+          <div class="eq" style="font-size:15px;text-align:center;padding:14px">
+            <strong style="color:var(--accent-2);font-size:16px">C<sup>Ga</sup><sub>ρ</sub>(u, v) = Φ<sub>ρ</sub>( Φ⁻¹(u), Φ⁻¹(v) )</strong>
+          </div>
+          <p>where u, v ∈ [0,1] are uniform inputs (the marginal CDF values). This is exactly the equation used in the worked example below — Step 1 produces u and v, Step 2 inverts to Φ⁻¹(u) and Φ⁻¹(v), Step 3 evaluates the bivariate normal CDF.</p>
+        </div>
+
+        <div class="walk">
+          <h4>Step 4 — Why this is "the" Gaussian copula</h4>
+          <p>The result is the same for <strong>any</strong> marginals F<sub>X</sub>, F<sub>Y</sub>, not just normal ones. If you want a joint distribution with t-marginals tied together by Gaussian dependence:</p>
+          <div class="eq" style="font-size:13px">H(x, y) = C<sup>Ga</sup><sub>ρ</sub>( T<sub>ν<sub>x</sub></sub>(x), T<sub>ν<sub>y</sub></sub>(y) ) = Φ<sub>ρ</sub>( Φ⁻¹[T<sub>ν<sub>x</sub></sub>(x)], Φ⁻¹[T<sub>ν<sub>y</sub></sub>(y)] )</div>
+          <p>This is what makes the equation so powerful: the same C<sup>Ga</sup><sub>ρ</sub> dependence object can be glued onto any combination of marginals. The copula carries the correlation; the marginals carry the shape.</p>
+        </div>
+
+        <div class="walk">
+          <h4>Step 5 — The copula density (for completeness)</h4>
+          <p>Differentiate twice to get the copula density. By the change-of-variables formula, with x = Φ⁻¹(u), y = Φ⁻¹(v):</p>
+          <div class="eq" style="font-size:13px">c<sup>Ga</sup><sub>ρ</sub>(u, v) = ∂²C/∂u∂v = φ<sub>ρ</sub>(x, y) / [ φ(x) · φ(y) ]</div>
+          <p>which simplifies to a clean closed form:</p>
+          <div class="eq" style="font-size:13px">c<sup>Ga</sup><sub>ρ</sub>(u, v) = (1/√(1−ρ²)) · exp{ [2ρxy − ρ²(x² + y²)] / [2(1−ρ²)] }</div>
+          <p>The exploding peaks at (0,0) and (1,1) you see in the copula density chart above are the (1−ρ²)<sup>−½</sup> factor combined with the corner behavior of Φ⁻¹.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2: STEP-BY-STEP WORKED EXAMPLE ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">02 — WORKED EXAMPLE</span>
+        <h2>Two-asset joint loss <em>via Gaussian copula</em></h2>
+      </div>
+      <div class="sub">t-distributed returns, ρ = 0.7. Three-step recipe: marginal CDFs → normal-equivalent quantiles → bivariate normal CDF.</div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="panel">
+        <h3>Inputs — two risky assets</h3>
+        <p class="desc">Each asset has t-distributed returns. Scale ≠ standard deviation: σ = s · √[df/(df−2)].</p>
+
+        <div class="grid grid-2" style="gap:14px">
+          <div>
+            <div class="control">
+              <label>Asset X — mean μ <span class="val" id="muXLabel">0.04</span></label>
+              <input type="range" id="muX" min="-0.10" max="0.20" step="0.01" value="0.04">
+            </div>
+            <div class="control">
+              <label>Asset X — scale s <span class="val" id="sXLabel">0.15</span></label>
+              <input type="range" id="sX" min="0.05" max="0.40" step="0.01" value="0.15">
+            </div>
+            <div class="control">
+              <label>Asset X — df ν <span class="val" id="dfXLabel">8</span></label>
+              <input type="range" id="dfX" min="3" max="30" step="1" value="8">
+            </div>
+          </div>
+          <div>
+            <div class="control">
+              <label>Asset Y — mean μ <span class="val" id="muYLabel">0.07</span></label>
+              <input type="range" id="muY" min="-0.10" max="0.20" step="0.01" value="0.07">
+            </div>
+            <div class="control">
+              <label>Asset Y — scale s <span class="val" id="sYLabel">0.17</span></label>
+              <input type="range" id="sY" min="0.05" max="0.40" step="0.01" value="0.17">
+            </div>
+            <div class="control">
+              <label>Asset Y — df ν <span class="val" id="dfYLabel">5</span></label>
+              <input type="range" id="dfY" min="3" max="30" step="1" value="5">
+            </div>
+          </div>
+        </div>
+
+        <div class="control" style="margin-top:14px">
+          <label>Copula correlation ρ <span class="val" id="rhoExLabel">0.70</span></label>
+          <input type="range" id="rhoEx" min="-0.95" max="0.95" step="0.05" value="0.70">
+        </div>
+        <div class="control" style="margin-top:10px">
+          <label>Loss threshold (return ≤ ?) <span class="val" id="thrLabel">0.000</span></label>
+          <input type="range" id="thr" min="-0.30" max="0.10" step="0.005" value="0.000">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Step-by-step calculation</h3>
+        <p class="desc">Probability that <strong>both</strong> assets produce a return below the threshold.</p>
+
+        <div class="walk">
+          <h4>Step 1 — Marginal probabilities under each t-distribution</h4>
+          <div class="calc">
+            z<sub>x</sub> = (k − μ<sub>x</sub>) / s<sub>x</sub> = <span id="zxCalc">—</span><br>
+            z<sub>y</sub> = (k − μ<sub>y</sub>) / s<sub>y</sub> = <span id="zyCalc">—</span><br>
+            F<sub>x</sub>(k) = T<sub>ν<sub>x</sub></sub>(z<sub>x</sub>) = <span class="res" id="FxRes">—</span><br>
+            F<sub>y</sub>(k) = T<sub>ν<sub>y</sub></sub>(z<sub>y</sub>) = <span class="res" id="FyRes">—</span>
+          </div>
+        </div>
+
+        <div class="walk">
+          <h4>Step 2 — Map to standard normal quantiles</h4>
+          <div class="calc">
+            Φ⁻¹[F<sub>x</sub>(k)] = <span class="res" id="qxRes">—</span><br>
+            Φ⁻¹[F<sub>y</sub>(k)] = <span class="res" id="qyRes">—</span>
+          </div>
+        </div>
+
+        <div class="walk">
+          <h4>Step 3 — Apply bivariate standard normal CDF</h4>
+          <div class="calc">
+            C(u,v) = Φ<sub>ρ</sub>[ Φ⁻¹(F<sub>x</sub>), Φ⁻¹(F<sub>y</sub>) ]<br>
+            = Φ<sub><span id="rhoShow">0.70</span></sub>[ <span id="qxShow">—</span>, <span id="qyShow">—</span> ]<br>
+            = <span class="res" id="jointRes" style="font-size:14px;font-weight:600">—</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px">
+          <div class="stat"><span class="label">P(X≤k)</span><span class="value mono" id="px">—</span></div>
+          <div class="stat"><span class="label">P(Y≤k)</span><span class="value mono" id="py">—</span></div>
+          <div class="stat accent"><span class="label">P(X≤k ∩ Y≤k)</span><span class="value mono" id="pxy">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3: CREDIT BASKET FOUNDATIONS ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">03 — APPLICATION TO CREDIT</span>
+        <h2>The one-factor Gaussian copula <em>for credit baskets</em></h2>
+      </div>
+      <div class="sub">Vasicek (1987) / Li (2000): each obligor's "asset return" decomposes into a single systematic factor M and an idiosyncratic shock. Default if asset value falls below the default threshold.</div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="panel">
+        <h3>The model</h3>
+        <div class="concept">
+          <h5>Step 1 — Factor decomposition</h5>
+          <p>For each obligor i: A<sub>i</sub> = √ρ · M + √(1−ρ) · ε<sub>i</sub>, where M and ε<sub>i</sub> are independent standard normals. ρ is the asset correlation — the "copula" parameter governing how defaults cluster.</p>
+        </div>
+        <div class="concept">
+          <h5>Step 2 — Default trigger</h5>
+          <p>Obligor i defaults over horizon T if A<sub>i</sub> ≤ Φ⁻¹(p<sub>i</sub>), where p<sub>i</sub> is the marginal default probability (from CDS spreads or rating agency tables).</p>
+        </div>
+        <div class="concept">
+          <h5>Step 3 — Conditional independence</h5>
+          <p>Given a realization of M, defaults are independent. Conditional default probability:</p>
+          <div class="eq">p(M) = <strong>Φ</strong>( [ Φ⁻¹(p) − √ρ · M ] / √(1−ρ) )</div>
+          <p>Bad M (negative) → high p(M) → many defaults. This is the contagion mechanism.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>How ρ reshapes the default-count distribution</h3>
+        <p class="desc">100-name homogeneous basket, 5-year PD = 5%. Watch the tail explode as correlation rises.</p>
+        <div class="chart-wrap tall"><canvas id="lossDistChart"></canvas></div>
+        <div class="caption">Distribution of the number of defaults over 5 years, by asset correlation ρ. Higher ρ ⇒ fatter right tail and bimodality emerges at extreme ρ.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4: MONTE CARLO SIMULATION ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">04 — MONTE CARLO LABORATORY</span>
+        <h2>Simulate a credit basket <em>under the copula</em></h2>
+      </div>
+      <div class="sub">Set portfolio characteristics, run draws, observe how correlation transforms loss outcomes from binomial-like to wildly skewed.</div>
+    </div>
+
+    <div class="grid grid-3070">
+      <div class="panel">
+        <h3>Simulation controls</h3>
+        <div class="control-row">
+          <div class="control">
+            <label>Number of names N <span class="val" id="nNamesLabel">100</span></label>
+            <select id="nNames">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100" selected>100</option>
+            </select>
+          </div>
+          <div class="control">
+            <label>5-year PD per name <span class="val" id="pdLabel">5.0%</span></label>
+            <input type="range" id="pd" min="0.005" max="0.30" step="0.005" value="0.05">
+          </div>
+          <div class="control">
+            <label>Asset correlation ρ <span class="val" id="rhoMcLabel">0.20</span></label>
+            <input type="range" id="rhoMc" min="0" max="0.90" step="0.025" value="0.20">
+          </div>
+          <div class="control">
+            <label>Recovery rate R <span class="val" id="recLabel">40%</span></label>
+            <input type="range" id="rec" min="0" max="0.80" step="0.05" value="0.40">
+          </div>
+          <div class="control">
+            <label>Number of paths <span class="val" id="pathsLabel">10,000</span></label>
+            <select id="paths">
+              <option value="2000">2,000</option>
+              <option value="5000">5,000</option>
+              <option value="10000" selected>10,000</option>
+              <option value="25000">25,000</option>
+              <option value="50000">50,000</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" id="runMc">Run simulation</button>
+            <button class="btn" id="resetMc">Reset</button>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="stat"><span class="label">Mean losses</span><span class="value mono" id="mcMean">—</span></div>
+          <div class="stat"><span class="label">Std dev</span><span class="value mono" id="mcStd">—</span></div>
+          <div class="stat warn"><span class="label">95% VaR</span><span class="value mono" id="mc95">—</span></div>
+          <div class="stat bad"><span class="label">99.5% VaR</span><span class="value mono" id="mc995">—</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Portfolio loss distribution</h3>
+        <p class="desc">Loss in % of notional. Compare independent (ρ=0) vs simulated correlated outcome.</p>
+        <div class="chart-wrap tall"><canvas id="mcChart"></canvas></div>
+        <div class="caption">Histogram of losses from <span id="pathsRun">—</span> Monte Carlo paths under the one-factor Gaussian copula.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 5: CDO TRANCHE ANALYSIS ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">05 — CDO TRANCHE ANALYSIS</span>
+        <h2>5-year synthetic CDO <em>tranche pricing &amp; risk</em></h2>
+      </div>
+      <div class="sub">A CDO carves the loss distribution into vertical slices. Equity absorbs first losses, mezzanine sits in the middle, senior is "protected" — but only if correlation is well-estimated.</div>
+    </div>
+
+    <div class="grid grid-3070">
+      <div class="panel">
+        <h3>Pool &amp; structure</h3>
+
+        <div class="control">
+          <label>Pool size (names)</label>
+          <select id="cdoNames">
+            <option value="10">10 names</option>
+            <option value="20">20 names</option>
+            <option value="50">50 names</option>
+            <option value="100" selected>100 names</option>
+          </select>
+        </div>
+        <div class="control" style="margin-top:10px">
+          <label>5-yr PD per name <span class="val" id="cdoPdLabel">5.0%</span></label>
+          <input type="range" id="cdoPd" min="0.005" max="0.20" step="0.005" value="0.05">
+        </div>
+        <div class="control" style="margin-top:10px">
+          <label>Asset correlation ρ <span class="val" id="cdoRhoLabel">0.20</span></label>
+          <input type="range" id="cdoRho" min="0" max="0.90" step="0.025" value="0.20">
+        </div>
+        <div class="control" style="margin-top:10px">
+          <label>Recovery R <span class="val" id="cdoRecLabel">40%</span></label>
+          <input type="range" id="cdoRec" min="0" max="0.80" step="0.05" value="0.40">
+        </div>
+
+        <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+          <h3 style="margin-bottom:10px">Tranche attachments (% of pool)</h3>
+          <div class="control">
+            <label>Equity 0 → <span class="val" id="att1Label">3</span>%</label>
+            <input type="range" id="att1" min="1" max="10" step="1" value="3">
+          </div>
+          <div class="control">
+            <label>Mezz Jr → <span class="val" id="att2Label">7</span>%</label>
+            <input type="range" id="att2" min="3" max="15" step="1" value="7">
+          </div>
+          <div class="control">
+            <label>Mezz Sr → <span class="val" id="att3Label">15</span>%</label>
+            <input type="range" id="att3" min="8" max="25" step="1" value="15">
+          </div>
+          <div class="control">
+            <label>Senior → <span class="val" id="att4Label">30</span>%</label>
+            <input type="range" id="att4" min="15" max="50" step="1" value="30">
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn primary" id="runCdo">Recompute tranches</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Tranche risk profile</h3>
+        <p class="desc">Expected tranche loss, default probability, and implied par spread (bps/yr) under the assumed correlation regime.</p>
+
+        <div class="tranche-stack" id="trancheStack"></div>
+
+        <table style="margin-top:12px">
+          <thead>
+            <tr>
+              <th>Tranche</th>
+              <th class="num">Attach</th>
+              <th class="num">Detach</th>
+              <th class="num">Width</th>
+              <th class="num">P(any loss)</th>
+              <th class="num">E[loss]</th>
+              <th class="num">Spread (bps)</th>
+            </tr>
+          </thead>
+          <tbody id="trancheTable"></tbody>
+        </table>
+        <div class="caption">Spread ≈ E[tranche loss] / (T · width) · 10,000 bps. A first-order par approximation, ignoring discounting and timing.</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px">
+      <div class="panel">
+        <h3>Pool size effect — 10 / 20 / 50 / 100 names</h3>
+        <p class="desc">Same per-name PD and correlation. Smaller pools have less diversification benefit; the loss distribution stays granular and bumpier.</p>
+        <div class="chart-wrap tall"><canvas id="poolSizeChart"></canvas></div>
+        <div class="caption">Loss distribution over 5 years for varying pool sizes at fixed ρ and PD.</div>
+      </div>
+      <div class="panel">
+        <h3>Correlation sensitivity per tranche</h3>
+        <p class="desc">The "correlation smile" of structured credit: equity loves low ρ; senior hates high ρ; mezzanine is roughly correlation-neutral somewhere in between.</p>
+        <div class="chart-wrap tall"><canvas id="rhoSensChart"></canvas></div>
+        <div class="caption">Expected tranche loss vs ρ (other parameters held fixed).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 6: STRESS SCENARIOS ============ -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="num">06 — STRESS SCENARIOS</span>
+        <h2>What happens when <em>correlation jumps?</em></h2>
+      </div>
+      <div class="sub">2007–2008 lesson: the senior tranche's "AAA-ness" depends critically on the assumed ρ. A jump from 0.20 to 0.50 vaporizes that protection.</div>
+    </div>
+
+    <div class="panel">
+      <div class="grid grid-4" style="gap:16px;margin-bottom:20px">
+        <div class="stat accent"><span class="label">Benign — ρ = 0.10</span><span class="value mono" id="sc1Senior">—</span><span class="delta">Senior expected loss</span></div>
+        <div class="stat warn"><span class="label">Base — ρ = 0.20</span><span class="value mono" id="sc2Senior">—</span><span class="delta">Senior expected loss</span></div>
+        <div class="stat bad"><span class="label">Stressed — ρ = 0.40</span><span class="value mono" id="sc3Senior">—</span><span class="delta">Senior expected loss</span></div>
+        <div class="stat bad"><span class="label">Crisis — ρ = 0.70</span><span class="value mono" id="sc4Senior">—</span><span class="delta">Senior expected loss</span></div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="stressChart"></canvas></div>
+      <div class="caption">All four scenarios use 100 names, 5% PD, 40% recovery. The senior tranche (15%–30%) is "untouchable" only under the benign assumption.</div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px">
+      <div class="panel">
+        <h3>Reading the table</h3>
+        <p class="desc">Loss thresholds and the probability the pool exceeds each, by correlation regime.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Loss threshold</th>
+              <th class="num">ρ=0.10</th>
+              <th class="num">ρ=0.20</th>
+              <th class="num">ρ=0.40</th>
+              <th class="num">ρ=0.70</th>
+            </tr>
+          </thead>
+          <tbody id="stressTable"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>Practitioner's note</h3>
+        <div class="concept">
+          <h5>What David Li actually proposed</h5>
+          <p>Li (2000) replaced the joint default time distribution with a Gaussian copula on the marginal survival times. Tractable, fast to calibrate, easy to plug into existing pricing systems.</p>
+        </div>
+        <div class="concept">
+          <h5>Where it broke</h5>
+          <p>Single ρ assumes constant pairwise dependence; the Gaussian copula has zero tail dependence — extreme co-movements are systematically underestimated. In 2007–2008, realized correlations spiked far beyond the 0.20–0.30 calibrated by base correlation models, repricing senior tranches by orders of magnitude.</p>
+        </div>
+        <div class="concept">
+          <h5>Modern alternatives</h5>
+          <p>t-copulas (positive tail dependence), Clayton/Gumbel for asymmetric tails, factor-loading copulas, random-recovery models, and direct Monte Carlo with regime-switching factor M. The plumbing is the same; the dependence kernel is richer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  Quantitative Credit Risk Toolkit · One-factor Gaussian copula · Vasicek / Li (2000) · For pedagogical use
+</footer>
+
+<script>
+/* ===========================================================
+   STATISTICAL UTILITIES
+   =========================================================== */
+
+// Standard normal PDF
+function normPdf(x){return Math.exp(-0.5*x*x)/Math.sqrt(2*Math.PI);}
+
+// Standard normal CDF — Hart's algorithm via erf approximation
+function erf(x){
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741;
+  const a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign=x<0?-1:1;x=Math.abs(x);
+  const t=1.0/(1.0+p*x);
+  const y=1.0-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return sign*y;
+}
+function normCdf(x){return 0.5*(1+erf(x/Math.SQRT2));}
+
+// Inverse standard normal — Beasley-Springer-Moro
+function normInv(p){
+  if(p<=0)return -Infinity;if(p>=1)return Infinity;
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const plow=0.02425,phigh=1-plow;
+  let q,r;
+  if(p<plow){q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p<=phigh){q=p-0.5;r=q*q;return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+  q=Math.sqrt(-2*Math.log(1-p));return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+}
+
+// log-Gamma — Lanczos
+function lnGamma(x){
+  const g=7;
+  const p=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(x<0.5)return Math.log(Math.PI/Math.sin(Math.PI*x))-lnGamma(1-x);
+  x-=1;
+  let a=p[0];const t=x+g+0.5;
+  for(let i=1;i<g+2;i++)a+=p[i]/(x+i);
+  return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+}
+
+// Regularized incomplete beta — for t CDF
+function betacf(x,a,b){
+  const MAXIT=200,EPS=3e-7,FPMIN=1e-30;
+  const qab=a+b,qap=a+1,qam=a-1;
+  let c=1,d=1-qab*x/qap;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;let h=d;
+  for(let m=1;m<=MAXIT;m++){
+    const m2=2*m;
+    let aa=m*(b-m)*x/((qam+m2)*(a+m2));
+    d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+    d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;const del=d*c;h*=del;
+    if(Math.abs(del-1)<EPS)break;
+  }
+  return h;
+}
+function ibeta(x,a,b){
+  if(x<=0)return 0;if(x>=1)return 1;
+  const bt=Math.exp(lnGamma(a+b)-lnGamma(a)-lnGamma(b)+a*Math.log(x)+b*Math.log(1-x));
+  if(x<(a+1)/(a+b+2))return bt*betacf(x,a,b)/a;
+  return 1-bt*betacf(1-x,b,a)/b;
+}
+
+// Student-t CDF
+function tCdf(x,df){
+  const xt=df/(df+x*x);
+  const p=0.5*ibeta(xt,df/2,0.5);
+  return x>=0?1-p:p;
+}
+
+// Student-t inverse — bisection
+function tInv(p,df){
+  if(p<=0)return -Infinity;if(p>=1)return Infinity;
+  let lo=-50,hi=50;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2;
+    if(tCdf(mid,df)<p)lo=mid;else hi=mid;
+    if(hi-lo<1e-7)break;
+  }
+  return (lo+hi)/2;
+}
+
+// Bivariate standard normal CDF — Genz (2004) implementation
+// Φ_ρ(h,k) = P(X≤h, Y≤k) for standard bivariate normal with correlation ρ
+// Reference: A.Genz, "Numerical computation of rectangular bivariate and trivariate
+//   normal and t probabilities", Statistics and Computing 14 (2004) 251-260.
+function biNormCdf(h, k, r) {
+  // Boundary cases
+  if (r === 1) return normCdf(Math.min(h, k));
+  if (r === -1) return Math.max(0, normCdf(h) + normCdf(k) - 1);
+  if (r === 0) return normCdf(h) * normCdf(k);
+
+  // Genz uses L(h,k,r) = P(X>h, Y>k); we want P(X<=h, Y<=k).
+  // Identity: P(X<=h, Y<=k) = Φ(h) + Φ(k) - 1 + L(-h,-k,r)... but cleanest
+  // is to integrate directly. Use Genz's L formulation:
+  //   L(dh,dk,r) = P(X>dh, Y>dk)
+  // Then return  1 - normCdf(-h) - normCdf(-k) + L(-h,-k,r)
+  //            = normCdf(h) + normCdf(k) - 1 + L(-h,-k,r)
+  // Wait — simpler: P(X<=h, Y<=k) = L(-h,-k,r) by symmetry of the bivariate normal.
+  //   Let U = -X, V = -Y; (U,V) is also standard bivariate normal with correlation r.
+  //   P(X<=h, Y<=k) = P(-U<=h, -V<=k) = P(U>=-h, V>=-k) = L(-h,-k,r). ✓
+  return genzL(-h, -k, r);
+}
+
+// Genz's L(dh,dk,r) = P(X > dh, Y > dk) for standard bivariate normal
+function genzL(dh, dk, r) {
+  // Gauss-Legendre nodes & weights (per Genz 2004, Table 1)
+  let w, x, ng;
+  if (Math.abs(r) < 0.3) {
+    ng = 6;
+    w = [0.1713244923791705, 0.3607615730481384, 0.4679139345726904];
+    x = [0.9324695142031522, 0.6612093864662647, 0.2386191860831970];
+  } else if (Math.abs(r) < 0.75) {
+    ng = 12;
+    w = [0.04717533638651177, 0.1069393259953183, 0.1600783285433464,
+         0.2031674267230659, 0.2334925365383547, 0.2491470458134029];
+    x = [0.9815606342467191, 0.9041172563704750, 0.7699026741943050,
+         0.5873179542866171, 0.3678314989981802, 0.1252334085114692];
+  } else {
+    ng = 20;
+    w = [0.01761400713915212, 0.04060142980038694, 0.06267204833410906,
+         0.08327674157670475, 0.1019301198172404, 0.1181945319615184,
+         0.1316886384491766, 0.1420961093183821, 0.1491729864726037,
+         0.1527533871307259];
+    x = [0.9931285991850949, 0.9639719272779138, 0.9122344282513259,
+         0.8391169718222188, 0.7463319064601508, 0.6360536807265150,
+         0.5108670019508271, 0.3737060887154196, 0.2277858511416451,
+         0.07652652113349733];
+  }
+
+  let h = dh, k = dk, hk = h * k, bvn = 0;
+
+  if (Math.abs(r) < 0.925) {
+    // Direct integration: r in [-0.925, 0.925]
+    const hs = (h * h + k * k) / 2;
+    const asr = Math.asin(r) / 2;
+    for (let i = 0; i < x.length; i++) {
+      for (let s = -1; s <= 1; s += 2) {
+        const sn = Math.sin(asr * (s * x[i] + 1));
+        bvn += w[i] * Math.exp((sn * hk - hs) / (1 - sn * sn));
+      }
+    }
+    bvn = bvn * asr / (2 * Math.PI) + normCdf(-h) * normCdf(-k);
+  } else {
+    // High-correlation branch
+    if (r < 0) { k = -k; hk = -hk; }
+    if (Math.abs(r) < 1) {
+      const as = (1 - r) * (1 + r);
+      const a = Math.sqrt(as);
+      const bs = (h - k) * (h - k);
+      const c = (4 - hk) / 8;
+      const d = (12 - hk) / 16;
+      let asr = -(bs / as + hk) / 2;
+      if (asr > -100) {
+        bvn = a * Math.exp(asr)
+            * (1 - c * (bs - as) * (1 - d * bs / 5) / 3
+               + c * d * as * as / 5);
+      }
+      if (-hk < 100) {
+        const b = Math.sqrt(bs);
+        bvn = bvn - Math.exp(-hk / 2) * Math.sqrt(2 * Math.PI)
+            * normCdf(-b / a) * b
+            * (1 - c * bs * (1 - d * bs / 5) / 3);
+      }
+      const aHalf = a / 2;
+      for (let i = 0; i < x.length; i++) {
+        for (let s = -1; s <= 1; s += 2) {
+          const xs = (aHalf * (s * x[i] + 1)) * (aHalf * (s * x[i] + 1));
+          const rs = Math.sqrt(1 - xs);
+          asr = -(bs / xs + hk) / 2;
+          if (asr > -100) {
+            bvn += aHalf * w[i] * Math.exp(asr)
+                 * (Math.exp(-hk * xs / (2 * (1 + rs) * (1 + rs))) / rs
+                    - (1 + c * xs * (1 + d * xs)));
+          }
+        }
+      }
+      bvn = -bvn / (2 * Math.PI);
+    }
+    if (r > 0) {
+      bvn = bvn + normCdf(-Math.max(h, k));
+    } else {
+      bvn = -bvn;
+      if (k > h) bvn = bvn + normCdf(k) - normCdf(h);
+    }
+  }
+  return Math.max(0, Math.min(1, bvn));
+}
+
+// Box-Muller pair
+let _bmCache=null;
+function randn(){
+  if(_bmCache!==null){const r=_bmCache;_bmCache=null;return r;}
+  const u1=Math.random(),u2=Math.random();
+  const r=Math.sqrt(-2*Math.log(u1)),th=2*Math.PI*u2;
+  _bmCache=r*Math.sin(th);return r*Math.cos(th);
+}
+
+/* ===========================================================
+   COLOR CONSTANTS & CHART DEFAULTS
+   =========================================================== */
+const COL={
+  ink:'#e8edf7',inkDim:'#9aa6c2',inkMute:'#6b7794',
+  accent:'#5dd3ff',accent2:'#ffb74d',
+  good:'#52e3a4',bad:'#ff6b8a',warn:'#ffcb6b',
+  border:'#243056',grid:'rgba(93,211,255,0.07)'
+};
+Chart.defaults.color=COL.inkDim;
+Chart.defaults.font.family="'Inter Tight', system-ui, sans-serif";
+Chart.defaults.font.size=10;
+Chart.defaults.borderColor=COL.border;
+Chart.defaults.scale.grid.color=COL.grid;
+Chart.defaults.scale.grid.lineWidth=1;
+Chart.defaults.scale.ticks.color=COL.inkMute;
+
+/* ===========================================================
+   SECTION 1 — BIVARIATE NORMAL vs COPULA CONTOURS
+   =========================================================== */
+let bivarChart, copulaChart;
+
+function biNormDensity(x,y,r){
+  const z=x*x-2*r*x*y+y*y;
+  return Math.exp(-z/(2*(1-r*r)))/(2*Math.PI*Math.sqrt(1-r*r));
+}
+function copulaDensity(u,v,r){
+  // c(u,v) = phi_2(Phi^-1(u),Phi^-1(v); rho) / [phi(Phi^-1(u))*phi(Phi^-1(v))]
+  if(u<=0.001||u>=0.999||v<=0.001||v>=0.999)return 0;
+  const x=normInv(u),y=normInv(v);
+  const num=Math.exp(-(r*r*(x*x+y*y)-2*r*x*y)/(2*(1-r*r)))/Math.sqrt(1-r*r);
+  return num;
+}
+
+function buildContourDataset(rho, n, kind){
+  // Build a "contour-like" scatter where alpha encodes density
+  const pts=[];
+  if(kind==='bivar'){
+    const range=3;
+    for(let i=0;i<n;i++){
+      const x=-range+(2*range)*i/(n-1);
+      for(let j=0;j<n;j++){
+        const y=-range+(2*range)*j/(n-1);
+        const d=biNormDensity(x,y,rho);
+        if(d>0.005)pts.push({x,y,d});
+      }
+    }
+  }else if(kind==='copula'){
+    for(let i=1;i<n;i++){
+      const u=i/n;
+      for(let j=1;j<n;j++){
+        const v=j/n;
+        const d=copulaDensity(u,v,rho);
+        if(d>0.05)pts.push({x:u,y:v,d:Math.min(d,5)});
+      }
+    }
+  }else if(kind==='bivarDist'){
+    const range=3;
+    for(let i=0;i<n;i++){
+      const x=-range+(2*range)*i/(n-1);
+      for(let j=0;j<n;j++){
+        const y=-range+(2*range)*j/(n-1);
+        const d=biNormCdf(x,y,rho);
+        pts.push({x,y,d});
+      }
+    }
+  }else if(kind==='copulaDist'){
+    for(let i=1;i<=n;i++){
+      const u=i/n;
+      for(let j=1;j<=n;j++){
+        const v=j/n;
+        const d=biNormCdf(normInv(u),normInv(v),rho);
+        pts.push({x:u,y:v,d});
+      }
+    }
+  }
+  return pts;
+}
+
+function densityToColor(d, dMin, dMax, accent){
+  const t=Math.max(0,Math.min(1,(d-dMin)/(dMax-dMin)));
+  // Map to a smooth color ramp
+  if(accent==='cyan'){
+    // dark blue -> cyan -> white-ish
+    const r=Math.round(20+t*200);
+    const g=Math.round(40+t*180);
+    const b=Math.round(120+t*135);
+    return `rgba(${r},${g},${b},${0.25+0.75*t})`;
+  }else{
+    const r=Math.round(40+t*215);
+    const g=Math.round(70+t*150);
+    const b=Math.round(180+t*40);
+    return `rgba(${r},${g},${b},${0.25+0.75*t})`;
+  }
+}
+
+function renderSurfaces(){
+  const rho=parseFloat(document.getElementById('rhoSlider').value);
+  document.getElementById('rhoLabel').textContent=rho.toFixed(2);
+  const mode=document.getElementById('surfaceMode').value;
+  const n=42;
+
+  let leftPts, rightPts, leftLabel, rightLabel;
+  if(mode==='density'){
+    leftPts=buildContourDataset(rho,n,'bivar');
+    rightPts=buildContourDataset(rho,n,'copula');
+    leftLabel='f(x,y)';
+    rightLabel='c[F(x),F(y)]';
+  }else{
+    leftPts=buildContourDataset(rho,n,'bivarDist');
+    rightPts=buildContourDataset(rho,n,'copulaDist');
+    leftLabel='F(x,y)';
+    rightLabel='C[F(x),F(y)]';
+  }
+
+  const lDmin=Math.min(...leftPts.map(p=>p.d));
+  const lDmax=Math.max(...leftPts.map(p=>p.d));
+  const rDmin=Math.min(...rightPts.map(p=>p.d));
+  const rDmax=Math.max(...rightPts.map(p=>p.d));
+
+  if(bivarChart)bivarChart.destroy();
+  if(copulaChart)copulaChart.destroy();
+
+  bivarChart=new Chart(document.getElementById('bivarChart'),{
+    type:'scatter',
+    data:{datasets:[{
+      label:leftLabel,
+      data:leftPts.map(p=>({x:p.x,y:p.y,d:p.d})),
+      backgroundColor:leftPts.map(p=>densityToColor(p.d,lDmin,lDmax,'cyan')),
+      pointRadius:4.2,pointStyle:'rect'
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          enabled:true, backgroundColor:COL.border, titleColor:COL.ink, bodyColor:COL.accent,
+          padding:8, cornerRadius:3, titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            title:items=>`x = ${items[0].parsed.x.toFixed(2)},  y = ${items[0].parsed.y.toFixed(2)}`,
+            label:item=>`${leftLabel} = ${item.raw.d.toFixed(4)}`
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',min:-3,max:3,title:{display:true,text:'x',color:COL.inkDim}},
+        y:{type:'linear',min:-3,max:3,title:{display:true,text:'y',color:COL.inkDim}}
+      }
+    }
+  });
+
+  copulaChart=new Chart(document.getElementById('copulaChart'),{
+    type:'scatter',
+    data:{datasets:[{
+      label:rightLabel,
+      data:rightPts.map(p=>({x:p.x,y:p.y,d:p.d})),
+      backgroundColor:rightPts.map(p=>densityToColor(p.d,rDmin,rDmax,'amber')),
+      pointRadius:4.2,pointStyle:'rect'
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          enabled:true, backgroundColor:COL.border, titleColor:COL.ink, bodyColor:COL.accent2,
+          padding:8, cornerRadius:3, titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            title:items=>`u = ${items[0].parsed.x.toFixed(2)},  v = ${items[0].parsed.y.toFixed(2)}`,
+            label:item=>`${rightLabel} = ${item.raw.d.toFixed(4)}`
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',min:0,max:1,title:{display:true,text:'F(x) = u',color:COL.inkDim}},
+        y:{type:'linear',min:0,max:1,title:{display:true,text:'F(y) = v',color:COL.inkDim}}
+      }
+    }
+  });
+
+  // 3D surfaces
+  render3DSurface('bivarSurface3D', rho, mode==='density'?'bivar':'bivarDist', 'cyan');
+  render3DSurface('copulaSurface3D', rho, mode==='density'?'copula':'copulaDist', 'amber');
+}
+
+/* ===========================================================
+   3D SURFACE RENDERING (Plotly)
+   =========================================================== */
+// Build a surface (z-matrix) for a given 'kind'
+// Plotly convention: pass x and y as explicit 2D meshgrid arrays so that
+// z[i][j] aligns unambiguously with x[i][j] and y[i][j].
+function buildSurfaceMatrix(rho, n, kind){
+  const z = [], x2d = [], y2d = [];
+  let axisVals;
+
+  if(kind==='bivar' || kind==='bivarDist'){
+    const range=3;
+    axisVals = [];
+    for(let i=0;i<n;i++) axisVals.push(-range+(2*range)*i/(n-1));
+  }else{
+    // copula or copulaDist — use cell centers on (0,1)
+    axisVals = [];
+    for(let i=0;i<n;i++) axisVals.push((i+0.5)/n);
+  }
+
+  // Build 2D meshgrid: row index j ↔ y-axis, column index i ↔ x-axis.
+  // For each row j (fixed y = axisVals[j]), columns i sweep x = axisVals[i].
+  for(let j=0;j<n;j++){
+    const xRow = [], yRow = [], zRow = [];
+    for(let i=0;i<n;i++){
+      const xv = axisVals[i];
+      const yv = axisVals[j];
+      xRow.push(xv);
+      yRow.push(yv);
+      let zv;
+      if(kind==='bivar')          zv = biNormDensity(xv, yv, rho);
+      else if(kind==='bivarDist') zv = biNormCdf(xv, yv, rho);
+      else if(kind==='copula')    zv = Math.min(copulaDensity(xv, yv, rho), 8);
+      else                        zv = biNormCdf(normInv(xv), normInv(yv), rho);
+      zRow.push(zv);
+    }
+    x2d.push(xRow); y2d.push(yRow); z.push(zRow);
+  }
+  return {x:x2d, y:y2d, z};
+}
+
+const COLORSCALES = {
+  cyan: [
+    [0.0, '#0a1525'],
+    [0.2, '#11304a'],
+    [0.4, '#1a5170'],
+    [0.6, '#3083a8'],
+    [0.8, '#5dd3ff'],
+    [1.0, '#a5e8ff']
+  ],
+  amber: [
+    [0.0, '#1a0f00'],
+    [0.2, '#3d2200'],
+    [0.4, '#7a4400'],
+    [0.6, '#cc7800'],
+    [0.8, '#ffb74d'],
+    [1.0, '#ffd99e']
+  ]
+};
+
+function plotlyLayout3D(kind, scheme){
+  const isCopula = kind.startsWith('copula');
+  const xRange = isCopula ? [0,1] : [-3,3];
+  const yRange = isCopula ? [0,1] : [-3,3];
+  const xLabel = isCopula ? 'F(x) = u' : 'x';
+  const yLabel = isCopula ? 'F(y) = v' : 'y';
+  let zLabel;
+  if(kind==='bivar') zLabel = 'f(x,y)';
+  else if(kind==='bivarDist') zLabel = 'F(x,y)';
+  else if(kind==='copula') zLabel = 'c(u,v)';
+  else zLabel = 'C(u,v)';
+
+  return {
+    autosize:true,
+    margin:{l:0,r:0,b:0,t:0,pad:0},
+    paper_bgcolor:'rgba(0,0,0,0)',
+    plot_bgcolor:'rgba(0,0,0,0)',
+    scene:{
+      xaxis:{
+        title:{text:xLabel,font:{color:'#9aa6c2',size:10,family:'JetBrains Mono'}},
+        range:xRange, gridcolor:'rgba(93,211,255,0.10)',
+        zerolinecolor:'rgba(93,211,255,0.20)',
+        tickfont:{color:'#6b7794',size:9},
+        backgroundcolor:'rgba(15,21,37,0.4)',showbackground:true
+      },
+      yaxis:{
+        title:{text:yLabel,font:{color:'#9aa6c2',size:10,family:'JetBrains Mono'}},
+        range:yRange, gridcolor:'rgba(93,211,255,0.10)',
+        zerolinecolor:'rgba(93,211,255,0.20)',
+        tickfont:{color:'#6b7794',size:9},
+        backgroundcolor:'rgba(15,21,37,0.4)',showbackground:true
+      },
+      zaxis:{
+        title:{text:zLabel,font:{color:'#9aa6c2',size:10,family:'JetBrains Mono'}},
+        gridcolor:'rgba(93,211,255,0.10)',
+        zerolinecolor:'rgba(93,211,255,0.20)',
+        tickfont:{color:'#6b7794',size:9},
+        backgroundcolor:'rgba(15,21,37,0.4)',showbackground:true
+      },
+      camera:{eye:{x:1.5, y:-1.5, z:1.0}},
+      aspectmode:'cube'
+    }
+  };
+}
+
+function render3DSurface(elemId, rho, kind, scheme){
+  const container = document.getElementById(elemId);
+  if(!container) return;
+  const n = (kind==='bivar' || kind==='copula') ? 36 : 30;
+  const {x,y,z} = buildSurfaceMatrix(rho, n, kind);
+
+  const data = [{
+    type:'surface',
+    x, y, z,
+    colorscale: COLORSCALES[scheme],
+    showscale:false,
+    opacity:0.92,
+    contours:{
+      z:{show:true, usecolormap:true, highlightcolor:'#ffffff', project:{z:true}, width:1}
+    },
+    lighting:{ambient:0.6, diffuse:0.7, specular:0.15, roughness:0.6, fresnel:0.15},
+    lightposition:{x:100,y:200,z:100},
+    hoverinfo:'x+y+z',
+    hovertemplate:'%{x:.2f}, %{y:.2f}<br>z = %{z:.4f}<extra></extra>'
+  }];
+
+  const layout = plotlyLayout3D(kind, scheme);
+  const config = {displayModeBar:false, responsive:true};
+
+  // First-time create vs update
+  if(container._plotlyInit){
+    Plotly.react(container, data, layout, config);
+  }else{
+    Plotly.newPlot(container, data, layout, config);
+    container._plotlyInit = true;
+  }
+}
+
+document.getElementById('rhoSlider').addEventListener('input',renderSurfaces);
+document.getElementById('surfaceMode').addEventListener('change',renderSurfaces);
+
+/* ===========================================================
+   SECTION 1b — DERIVATION WALKTHROUGH (5 stages)
+   Mirrors slide-deck images 9-14: density → CDF → joint density
+   → joint CDF → copula transformation
+   =========================================================== */
+let derivChart=null;
+let derivStage=1;
+
+const DERIV_MATH = {
+  1: {
+    title: "Stage 1 — Probability density f(x)",
+    chartTitle: "Three normal probability densities",
+    chartDesc: "Three normal densities with different (μ, σ). Shaded area under one curve = P(X ≤ x₂). Drag the slider to move the threshold.",
+    caption: "f(x) = (1 / σ√2π) · exp[ −(x−μ)² / 2σ² ]",
+    body: `
+      <div class="walk">
+        <h4>Definition</h4>
+        <p>The probability density function f(x) describes how likely a random variable is to take values near x. For a normal distribution:</p>
+        <div class="eq" style="font-size:13px">f(x) = (1 / σ√2π) · exp[ −(x−μ)² / 2σ² ]</div>
+        <p>The total area under f(x) integrates to 1: it is a density, not a probability.</p>
+      </div>
+      <div class="walk">
+        <h4>From density to probability</h4>
+        <p>The density itself is not a probability — to get one, you integrate over an interval. The shaded region in the chart is:</p>
+        <div class="eq" style="font-size:13px">P(X ≤ x₂) = ∫<sub>−∞</sub><sup>x₂</sup> f(x) dx</div>
+        <p>For non-normal distributions f(x) takes other shapes — heavy-tailed (Student-t), skewed (lognormal), bounded (beta) — but the integration recipe is identical.</p>
+      </div>
+      <div class="walk">
+        <h4>What you cannot do with f(x) alone</h4>
+        <p>The density tells you about <em>one</em> variable. To talk about how two assets move together, you need a joint density f(x,y) — and to do that meaningfully you need to know the dependence between them. That is the role of the copula.</p>
+      </div>`
+  },
+
+  2: {
+    title: "Stage 2 — Cumulative distribution F(x)",
+    chartTitle: "The same three normals, but as CDFs",
+    chartDesc: "F(x) is the running area under f(x). Output is always between 0 (impossible) and 1 (certain).",
+    caption: "F(x) = ∫₋∞^x f(t) dt    ⟹    F: ℝ → [0,1]",
+    body: `
+      <div class="walk">
+        <h4>Definition</h4>
+        <p>The cumulative distribution function (CDF) is the integral of the density:</p>
+        <div class="eq" style="font-size:13px">F(x) = P(X ≤ x) = ∫<sub>−∞</sub><sup>x</sup> f(t) dt</div>
+        <p>It transforms any value of x into a probability between 0 and 1 — exactly the value you can read off the y-axis of the chart.</p>
+      </div>
+      <div class="walk">
+        <h4>The crucial property: uniformity</h4>
+        <p>If X has CDF F, then U = F(X) is <strong>uniformly distributed on [0,1]</strong>, regardless of the original shape of F. This is the <em>probability integral transform</em>.</p>
+        <div class="eq" style="font-size:13px">P(F(X) ≤ u) = P(X ≤ F⁻¹(u)) = F(F⁻¹(u)) = u</div>
+        <p>This is the lever Sklar's theorem pulls. Every random variable, no matter how exotic, can be mapped to a uniform [0,1] variable via its own CDF. The shape of F doesn't matter — the output is always uniform.</p>
+      </div>
+      <div class="walk">
+        <h4>Why the copula needs this</h4>
+        <p>To talk about pure dependence between two variables, we need to remove their individual shapes. The CDF transformation does exactly that — it strips marginal information out and leaves only rank order.</p>
+        <p>If we feed F<sub>X</sub>(X) and F<sub>Y</sub>(Y) into a function on [0,1]², we can study the dependence structure without being distracted by whether X is normal or t or lognormal.</p>
+      </div>`
+  },
+
+  3: {
+    title: "Stage 3 — Joint density f(x,y)",
+    chartTitle: "Bivariate normal density (contour view)",
+    chartDesc: "The bivariate density f(x,y) lives in (−∞, +∞)². Its shape depends on both the marginals and the correlation ρ.",
+    caption: "Volume under f(x,y) over a region = probability that (X,Y) falls in that region.",
+    body: `
+      <div class="walk">
+        <h4>From one variable to two</h4>
+        <p>For a single variable, the density is a curve and probability is area. For two variables, the density is a surface and probability is volume:</p>
+        <div class="eq" style="font-size:13px">P((X,Y) ∈ A) = ∫∫<sub>A</sub> f(x,y) dx dy</div>
+        <p>The bivariate normal density has the closed form:</p>
+        <div class="eq" style="font-size:12px">f(x,y) = (1 / 2πσ<sub>x</sub>σ<sub>y</sub>√(1−ρ²)) · exp{ −Q / [2(1−ρ²)] }</div>
+        <p>where Q = [(x−μ<sub>x</sub>)/σ<sub>x</sub>]² − 2ρ[(x−μ<sub>x</sub>)/σ<sub>x</sub>][(y−μ<sub>y</sub>)/σ<sub>y</sub>] + [(y−μ<sub>y</sub>)/σ<sub>y</sub>]².</p>
+      </div>
+      <div class="walk">
+        <h4>Five parameters define a bivariate normal</h4>
+        <p>μ<sub>x</sub>, σ<sub>x</sub>, μ<sub>y</sub>, σ<sub>y</sub>, and ρ. The first four describe the marginals; the last describes the dependence. As ρ moves from 0 toward ±1, the contours stretch from circles into ellipses tilted at 45°.</p>
+      </div>
+      <div class="walk">
+        <h4>The problem this density doesn't solve</h4>
+        <p>The bivariate normal works only if both marginals are normal. As soon as you have heavier tails (returns), or one-sided support (defaults), the off-the-shelf bivariate density fails. We need a way to specify the correlation structure that is independent of the marginal shapes.</p>
+      </div>`
+  },
+
+  4: {
+    title: "Stage 4 — Joint CDF F(x,y)",
+    chartTitle: "Bivariate normal cumulative distribution",
+    chartDesc: "F(x,y) is the volume under f(x,y) integrated up to (x,y). Output is again in [0,1].",
+    caption: "F(x,y) = ∫₋∞^y ∫₋∞^x f(s,t) ds dt    ⟹    F: ℝ² → [0,1]",
+    body: `
+      <div class="walk">
+        <h4>The bivariate CDF</h4>
+        <p>The joint CDF integrates the joint density up to a corner point:</p>
+        <div class="eq" style="font-size:13px">F(x₁, y₁) = P(X ≤ x₁ and Y ≤ y₁) = ∫<sub>−∞</sub><sup>y₁</sup> ∫<sub>−∞</sub><sup>x₁</sup> f(x, y) dx dy</div>
+        <p>For the bivariate standard normal with correlation ρ, this is denoted Φ<sub>ρ</sub>(x, y). It cannot be written in closed form — it must be computed numerically (Drezner-Wesolowsky, Genz, etc.).</p>
+      </div>
+      <div class="walk">
+        <h4>The marginals of F(x,y)</h4>
+        <p>The marginal CDF of X alone is recovered by sending y to infinity:</p>
+        <div class="eq" style="font-size:13px">F<sub>X</sub>(x) = lim<sub>y→∞</sub> F(x, y) = F(x, ∞)</div>
+        <p>Symmetrically for Y. So the joint distribution function "contains" both marginal distribution functions.</p>
+      </div>
+      <div class="walk">
+        <h4>The setup for Sklar's theorem</h4>
+        <p>We now have:</p>
+        <p>• A joint CDF F(x,y) with output in [0,1]<br>
+        • Two marginal CDFs F<sub>X</sub>(x), F<sub>Y</sub>(y), each with output in [0,1]</p>
+        <p>The natural question: can we express the joint as a function of the marginals — H(x,y) = C(F<sub>X</sub>(x), F<sub>Y</sub>(y)) — for some function C on the unit square? Sklar's theorem says yes, uniquely, and C is the copula.</p>
+      </div>`
+  },
+
+  5: {
+    title: "Stage 5 — The copula C(u,v)",
+    chartTitle: "The Gaussian copula on [0,1]²",
+    chartDesc: "The copula lives on the unit square. The contours capture the dependence shape, completely independent of the original marginals.",
+    caption: "C(u, v) = Φ_ρ( Φ⁻¹(u), Φ⁻¹(v) )    where u, v ∈ [0,1]",
+    body: `
+      <div class="walk">
+        <h4>The transformation</h4>
+        <p>Sklar's theorem gives:</p>
+        <div class="eq" style="font-size:13px">F(x, y) = C( F<sub>X</sub>(x), F<sub>Y</sub>(y) )</div>
+        <p>Substitute u = F<sub>X</sub>(x) and v = F<sub>Y</sub>(y). Then x = F<sub>X</sub>⁻¹(u) and y = F<sub>Y</sub>⁻¹(v), so:</p>
+        <div class="eq" style="font-size:13px">C(u, v) = F( F<sub>X</sub>⁻¹(u), F<sub>Y</sub>⁻¹(v) )</div>
+        <p>For the Gaussian copula, F is the bivariate normal CDF Φ<sub>ρ</sub> and the marginals are standard normal:</p>
+        <div class="eq" style="font-size:14px;text-align:center;padding:14px"><strong style="color:var(--accent-2);font-size:15px">C<sup>Ga</sup><sub>ρ</sub>(u, v) = Φ<sub>ρ</sub>( Φ⁻¹(u), Φ⁻¹(v) )</strong></div>
+      </div>
+      <div class="walk">
+        <h4>What the equation says, in words</h4>
+        <p>① Take any two probabilities u and v in [0,1].<br>
+        ② Map them back to standard normal quantiles: Φ⁻¹(u) and Φ⁻¹(v).<br>
+        ③ Evaluate the bivariate standard normal CDF at those quantiles, with correlation ρ.<br>
+        ④ The result is the joint probability — the copula value.</p>
+      </div>
+      <div class="walk">
+        <h4>Why this is so powerful</h4>
+        <p>The marginals X and Y were never used. The copula formula treats u and v as raw probabilities, not as observations of any particular distribution. So you can plug in:</p>
+        <p>• u = T<sub>ν</sub>(x) for a t-distributed asset<br>
+        • v = LN(y; μ, σ) for a lognormal asset<br>
+        • or any other CDF</p>
+        <p>and the same Φ<sub>ρ</sub> machinery glues them together with Gaussian dependence. This is the entire foundation of every copula-based credit model — including the Vasicek/Li one-factor framework that prices CDX tranches.</p>
+      </div>`
+  }
+};
+
+function getDerivThreshold(){
+  return parseFloat(document.getElementById('derivThresh').value);
+}
+function getDerivRho(){
+  return parseFloat(document.getElementById('rhoDeriv').value);
+}
+
+function renderDerivChart(){
+  const stage = derivStage;
+  const config = DERIV_MATH[stage];
+  document.getElementById('derivChartTitle').textContent = config.chartTitle;
+  document.getElementById('derivChartDesc').textContent = config.chartDesc;
+  document.getElementById('derivCaption').textContent = config.caption;
+  document.getElementById('derivMathTitle').textContent = config.title;
+  document.getElementById('derivMathBody').innerHTML = config.body;
+
+  // toggle controls visibility
+  const showThresh = (stage===1 || stage===2);
+  const showRho = (stage===3 || stage===4 || stage===5);
+  const showSurface = (stage===3 || stage===4 || stage===5);
+  document.getElementById('thresholdControl').style.display = showThresh?'flex':'none';
+  document.getElementById('rhoControlDeriv').style.display = showRho?'flex':'none';
+  document.getElementById('derivSurfaceContainer').style.display = showSurface?'block':'none';
+
+  if(derivChart){derivChart.destroy();derivChart=null;}
+  const ctx = document.getElementById('derivChart');
+
+  if(stage===1) renderStage1(ctx);
+  else if(stage===2) renderStage2(ctx);
+  else if(stage===3) renderStage3(ctx);
+  else if(stage===4) renderStage4(ctx);
+  else if(stage===5) renderStage5(ctx);
+
+  // Render the 3D surface for stages 3-5
+  if(showSurface){
+    const rho = getDerivRho();
+    const kindMap = {3:'bivar', 4:'bivarDist', 5:'copulaDist'};
+    const schemeMap = {3:'cyan', 4:'cyan', 5:'amber'};
+    render3DSurface('derivSurface3D', rho, kindMap[stage], schemeMap[stage]);
+  }
+}
+
+// Helper: normal pdf with location/scale
+function nPdf(x, mu, sig){
+  const z=(x-mu)/sig;
+  return Math.exp(-0.5*z*z)/(sig*Math.sqrt(2*Math.PI));
+}
+function nCdfMS(x, mu, sig){
+  return normCdf((x-mu)/sig);
+}
+
+function renderStage1(ctx){
+  // 3 normal pdfs, with shaded area under the solid (mu=0, sigma=1) curve up to x2
+  const x2 = getDerivThreshold();
+  const xs = [];
+  for(let x=-4;x<=6;x+=0.05) xs.push(x);
+  const params = [
+    {mu:1,  sig:2,   color:COL.bad,    label:'μ=1, σ=2',    dash:[6,3]},
+    {mu:0,  sig:1,   color:COL.accent, label:'μ=0, σ=1',    dash:[]},
+    {mu:-1, sig:0.8, color:COL.warn,   label:'μ=−1, σ=0.8', dash:[2,3]}
+  ];
+  const datasets = params.map(p=>({
+    label:p.label,
+    data:xs.map(x=>({x,y:nPdf(x,p.mu,p.sig)})),
+    borderColor:p.color,
+    backgroundColor:p.color+'10',
+    borderDash:p.dash, borderWidth:2, pointRadius:0, tension:0.1, fill:false
+  }));
+  // shaded area up to x2 under solid curve (mu=0, sig=1)
+  const shadedXs = xs.filter(x=>x<=x2);
+  datasets.push({
+    label:`P(X ≤ ${x2.toFixed(2)})`,
+    data:shadedXs.map(x=>({x,y:nPdf(x,0,1)})),
+    borderColor:COL.accent,
+    backgroundColor:'rgba(93,211,255,0.30)',
+    borderWidth:0, pointRadius:0, tension:0.1, fill:'origin'
+  });
+  // probability annotation
+  const px2 = normCdf(x2);
+  document.getElementById('threshLabel').textContent = x2.toFixed(2)+'  →  P = '+(px2*100).toFixed(2)+'%';
+
+  derivChart = new Chart(ctx,{
+    type:'line', data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{color:COL.inkDim,font:{size:10},boxWidth:14}},
+        tooltip:{enabled:false},
+        annotation:{}
+      },
+      scales:{
+        x:{type:'linear',min:-4,max:6,title:{display:true,text:'x',color:COL.inkDim}},
+        y:{min:0,max:0.55,title:{display:true,text:'f(x)',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+function renderStage2(ctx){
+  const x2 = getDerivThreshold();
+  const xs = [];
+  for(let x=-4;x<=6;x+=0.05) xs.push(x);
+  const params = [
+    {mu:1,  sig:2,   color:COL.bad,    label:'μ=1, σ=2',    dash:[6,3]},
+    {mu:0,  sig:1,   color:COL.accent, label:'μ=0, σ=1',    dash:[]},
+    {mu:-1, sig:0.8, color:COL.warn,   label:'μ=−1, σ=0.8', dash:[2,3]}
+  ];
+  const datasets = params.map(p=>({
+    label:p.label,
+    data:xs.map(x=>({x,y:nCdfMS(x,p.mu,p.sig)})),
+    borderColor:p.color,
+    backgroundColor:'transparent',
+    borderDash:p.dash, borderWidth:2, pointRadius:0, tension:0.1, fill:false
+  }));
+  // marker line at x2 and corresponding F values
+  const px2 = normCdf(x2);
+  document.getElementById('threshLabel').textContent = x2.toFixed(2)+'  →  F(x) = '+px2.toFixed(4);
+
+  derivChart = new Chart(ctx,{
+    type:'line', data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:COL.inkDim,font:{size:10},boxWidth:14}},tooltip:{enabled:false}},
+      scales:{
+        x:{type:'linear',min:-4,max:6,title:{display:true,text:'x',color:COL.inkDim}},
+        y:{min:0,max:1.05,title:{display:true,text:'F(x) — CDF',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+function renderStage3(ctx){
+  // bivariate normal density contour at user-selected rho
+  const rho = getDerivRho();
+  document.getElementById('rhoDerivLabel').textContent = rho.toFixed(2);
+  const n=42;
+  const pts = buildContourDataset(rho, n, 'bivar');
+  const dMin = Math.min(...pts.map(p=>p.d));
+  const dMax = Math.max(...pts.map(p=>p.d));
+
+  derivChart = new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{
+      label:'f(x,y)',
+      data:pts.map(p=>({x:p.x,y:p.y,d:p.d})),
+      backgroundColor:pts.map(p=>densityToColor(p.d,dMin,dMax,'cyan')),
+      pointRadius:4.2,pointStyle:'rect'
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          enabled:true, backgroundColor:COL.border, titleColor:COL.ink, bodyColor:COL.accent,
+          padding:8, cornerRadius:3, titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            title:items=>`x = ${items[0].parsed.x.toFixed(2)},  y = ${items[0].parsed.y.toFixed(2)}`,
+            label:item=>`f(x, y) = ${item.raw.d.toFixed(4)}`
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',min:-3,max:3,title:{display:true,text:'x',color:COL.inkDim}},
+        y:{type:'linear',min:-3,max:3,title:{display:true,text:'y',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+function renderStage4(ctx){
+  // bivariate normal CDF surface (contour rendering)
+  const rho = getDerivRho();
+  document.getElementById('rhoDerivLabel').textContent = rho.toFixed(2);
+  const n=36;
+  const pts = buildContourDataset(rho, n, 'bivarDist');
+  const dMin = Math.min(...pts.map(p=>p.d));
+  const dMax = Math.max(...pts.map(p=>p.d));
+
+  derivChart = new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{
+      label:'F(x,y)',
+      data:pts.map(p=>({x:p.x,y:p.y,d:p.d})),
+      backgroundColor:pts.map(p=>densityToColor(p.d,dMin,dMax,'cyan')),
+      pointRadius:5,pointStyle:'rect'
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          enabled:true, backgroundColor:COL.border, titleColor:COL.ink, bodyColor:COL.accent,
+          padding:8, cornerRadius:3, titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            title:items=>`x = ${items[0].parsed.x.toFixed(2)},  y = ${items[0].parsed.y.toFixed(2)}`,
+            label:item=>`F(x, y) = ${item.raw.d.toFixed(4)}`
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',min:-3,max:3,title:{display:true,text:'x',color:COL.inkDim}},
+        y:{type:'linear',min:-3,max:3,title:{display:true,text:'y',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+function renderStage5(ctx){
+  // copula distribution: contour on [0,1]^2
+  const rho = getDerivRho();
+  document.getElementById('rhoDerivLabel').textContent = rho.toFixed(2);
+  const n=36;
+  const pts = buildContourDataset(rho, n, 'copulaDist');
+  const dMin = Math.min(...pts.map(p=>p.d));
+  const dMax = Math.max(...pts.map(p=>p.d));
+
+  derivChart = new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{
+      label:'C(u,v)',
+      data:pts.map(p=>({x:p.x,y:p.y,d:p.d})),
+      backgroundColor:pts.map(p=>densityToColor(p.d,dMin,dMax,'amber')),
+      pointRadius:5,pointStyle:'rect'
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          enabled:true, backgroundColor:COL.border, titleColor:COL.ink, bodyColor:COL.accent2,
+          padding:8, cornerRadius:3, titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            title:items=>`u = ${items[0].parsed.x.toFixed(2)},  v = ${items[0].parsed.y.toFixed(2)}`,
+            label:item=>`C(u, v) = ${item.raw.d.toFixed(4)}`
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',min:0,max:1,title:{display:true,text:'u = F(x)',color:COL.inkDim}},
+        y:{type:'linear',min:0,max:1,title:{display:true,text:'v = F(y)',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+// wire stage pills
+document.querySelectorAll('#derivSteps .step-pill').forEach(pill=>{
+  pill.addEventListener('click',()=>{
+    document.querySelectorAll('#derivSteps .step-pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    derivStage = parseInt(pill.dataset.stage);
+    renderDerivChart();
+  });
+});
+document.getElementById('derivThresh').addEventListener('input',()=>{
+  if(derivStage===1 || derivStage===2) renderDerivChart();
+});
+document.getElementById('rhoDeriv').addEventListener('input',()=>{
+  if(derivStage>=3) renderDerivChart();
+});
+
+/* ===========================================================
+   SECTION 2 — STEP-BY-STEP WORKED EXAMPLE
+   =========================================================== */
+function fmt(x,d=4){return (x>=0?' ':'')+x.toFixed(d);}
+function pct(x,d=2){return (100*x).toFixed(d)+'%';}
+
+function recalcExample(){
+  const muX=+document.getElementById('muX').value;
+  const sX=+document.getElementById('sX').value;
+  const dfX=+document.getElementById('dfX').value;
+  const muY=+document.getElementById('muY').value;
+  const sY=+document.getElementById('sY').value;
+  const dfY=+document.getElementById('dfY').value;
+  const rho=+document.getElementById('rhoEx').value;
+  const k=+document.getElementById('thr').value;
+
+  document.getElementById('muXLabel').textContent=muX.toFixed(2);
+  document.getElementById('sXLabel').textContent=sX.toFixed(2);
+  document.getElementById('dfXLabel').textContent=dfX;
+  document.getElementById('muYLabel').textContent=muY.toFixed(2);
+  document.getElementById('sYLabel').textContent=sY.toFixed(2);
+  document.getElementById('dfYLabel').textContent=dfY;
+  document.getElementById('rhoExLabel').textContent=rho.toFixed(2);
+  document.getElementById('thrLabel').textContent=k.toFixed(3);
+
+  const zx=(k-muX)/sX, zy=(k-muY)/sY;
+  const Fx=tCdf(zx,dfX), Fy=tCdf(zy,dfY);
+  const qx=normInv(Fx), qy=normInv(Fy);
+  const joint=biNormCdf(qx,qy,rho);
+
+  document.getElementById('zxCalc').textContent=fmt(zx);
+  document.getElementById('zyCalc').textContent=fmt(zy);
+  document.getElementById('FxRes').textContent=Fx.toFixed(4);
+  document.getElementById('FyRes').textContent=Fy.toFixed(4);
+  document.getElementById('qxRes').textContent=fmt(qx);
+  document.getElementById('qyRes').textContent=fmt(qy);
+  document.getElementById('rhoShow').textContent=rho.toFixed(2);
+  document.getElementById('qxShow').textContent=fmt(qx);
+  document.getElementById('qyShow').textContent=fmt(qy);
+  document.getElementById('jointRes').textContent=joint.toFixed(4);
+  document.getElementById('px').textContent=pct(Fx);
+  document.getElementById('py').textContent=pct(Fy);
+  document.getElementById('pxy').textContent=pct(joint);
+}
+
+['muX','sX','dfX','muY','sY','dfY','rhoEx','thr'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',recalcExample);
+});
+
+/* ===========================================================
+   SECTION 3 — LOSS DISTRIBUTION BY ρ (analytical)
+   =========================================================== */
+// Vasicek large-pool conditional default probability
+function condDefault(p, rho, m){
+  const num=normInv(p)-Math.sqrt(rho)*m;
+  return normCdf(num/Math.sqrt(1-rho));
+}
+// Pmf of number of defaults in N-name homogeneous basket via Gauss-Hermite
+function lossPmf(N, p, rho, nQuad=80){
+  // integrate over M ~ N(0,1)
+  const pmf=new Array(N+1).fill(0);
+  const M0=-6, M1=6, dM=(M1-M0)/nQuad;
+  // log binomial coefficients
+  const lnC=new Array(N+1).fill(0);
+  for(let k=1;k<=N;k++){
+    lnC[k]=lnC[k-1]+Math.log((N-k+1)/k);
+  }
+  for(let i=0;i<nQuad;i++){
+    const m=M0+(i+0.5)*dM;
+    const w=normPdf(m)*dM;
+    const pm=condDefault(p,rho,m);
+    if(pm<=0||pm>=1){
+      const k=pm<=0?0:N;
+      pmf[k]+=w;continue;
+    }
+    const lpm=Math.log(pm), l1pm=Math.log(1-pm);
+    for(let k=0;k<=N;k++){
+      const lnPk=lnC[k]+k*lpm+(N-k)*l1pm;
+      pmf[k]+=w*Math.exp(lnPk);
+    }
+  }
+  // normalize tiny rounding
+  const s=pmf.reduce((a,b)=>a+b,0);
+  return pmf.map(v=>v/s);
+}
+
+let lossDistChart;
+function renderLossDist(){
+  const N=100, p=0.05;
+  const rhos=[0.05,0.20,0.40,0.70];
+  const colors=[COL.good,COL.accent,COL.warn,COL.bad];
+  const datasets=rhos.map((r,i)=>{
+    const pmf=lossPmf(N,p,r,100);
+    return {
+      label:`ρ = ${r.toFixed(2)}`,
+      data:pmf.slice(0,40).map((v,k)=>({x:k,y:v})),
+      borderColor:colors[i],
+      backgroundColor:colors[i]+'20',
+      pointRadius:0,borderWidth:2,tension:0.2,fill:false
+    };
+  });
+  if(lossDistChart)lossDistChart.destroy();
+  lossDistChart=new Chart(document.getElementById('lossDistChart'),{
+    type:'line',
+    data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{color:COL.inkDim,font:{size:11}}},
+        tooltip:{mode:'index',intersect:false,backgroundColor:COL.border}
+      },
+      scales:{
+        x:{type:'linear',min:0,max:40,title:{display:true,text:'Number of defaults (out of 100)',color:COL.inkDim}},
+        y:{title:{display:true,text:'P(k defaults)',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+/* ===========================================================
+   SECTION 4 — MONTE CARLO
+   =========================================================== */
+let mcChart;
+let lastMcLosses=null;
+
+function runMC(){
+  const N=+document.getElementById('nNames').value;
+  const pd=+document.getElementById('pd').value;
+  const rho=+document.getElementById('rhoMc').value;
+  const R=+document.getElementById('rec').value;
+  const paths=+document.getElementById('paths').value;
+
+  document.getElementById('nNamesLabel').textContent=N;
+  document.getElementById('pdLabel').textContent=pct(pd,1);
+  document.getElementById('rhoMcLabel').textContent=rho.toFixed(2);
+  document.getElementById('recLabel').textContent=pct(R,0);
+  document.getElementById('pathsLabel').textContent=paths.toLocaleString();
+  document.getElementById('pathsRun').textContent=paths.toLocaleString();
+
+  const thr=normInv(pd);
+  const sqrtRho=Math.sqrt(rho), sqrt1mRho=Math.sqrt(1-rho);
+  const losses=new Float64Array(paths);
+  const lgd=1-R;
+  for(let p=0;p<paths;p++){
+    const M=randn();
+    let defaults=0;
+    for(let i=0;i<N;i++){
+      const A=sqrtRho*M+sqrt1mRho*randn();
+      if(A<=thr)defaults++;
+    }
+    losses[p]=defaults*lgd/N; // loss as fraction of pool
+  }
+  lastMcLosses=losses;
+
+  // statistics
+  let sum=0,sumSq=0;
+  for(let p=0;p<paths;p++){sum+=losses[p];sumSq+=losses[p]*losses[p];}
+  const mean=sum/paths;
+  const std=Math.sqrt(sumSq/paths-mean*mean);
+  const sorted=Array.from(losses).sort((a,b)=>a-b);
+  const var95=sorted[Math.floor(0.95*paths)];
+  const var995=sorted[Math.floor(0.995*paths)];
+
+  document.getElementById('mcMean').textContent=pct(mean);
+  document.getElementById('mcStd').textContent=pct(std);
+  document.getElementById('mc95').textContent=pct(var95);
+  document.getElementById('mc995').textContent=pct(var995);
+
+  // histogram
+  const nBins=50;
+  const maxL=Math.min(1, Math.max(0.05, sorted[Math.floor(0.999*paths)]*1.2));
+  const binW=maxL/nBins;
+  const bins=new Array(nBins).fill(0);
+  for(let p=0;p<paths;p++){
+    const b=Math.min(nBins-1,Math.floor(losses[p]/binW));
+    bins[b]++;
+  }
+  const labels=bins.map((_,i)=>(100*(i+0.5)*binW).toFixed(1));
+  const correlatedData=bins.map(b=>b/paths);
+
+  // independent comparison: just binomial
+  const binsInd=new Array(nBins).fill(0);
+  for(let p=0;p<paths;p++){
+    let defaults=0;
+    for(let i=0;i<N;i++)if(Math.random()<pd)defaults++;
+    const loss=defaults*lgd/N;
+    const b=Math.min(nBins-1,Math.floor(loss/binW));
+    binsInd[b]++;
+  }
+  const indData=binsInd.map(b=>b/paths);
+
+  if(mcChart)mcChart.destroy();
+  mcChart=new Chart(document.getElementById('mcChart'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:`Independent (ρ=0)`,data:indData,backgroundColor:COL.inkMute+'80',borderColor:COL.inkMute,borderWidth:1},
+        {label:`Copula ρ=${rho.toFixed(2)}`,data:correlatedData,backgroundColor:COL.accent+'90',borderColor:COL.accent,borderWidth:1}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{color:COL.inkDim}},
+        tooltip:{mode:'index',intersect:false,backgroundColor:COL.border,
+          callbacks:{title:items=>`Loss ≈ ${items[0].label}%`}}
+      },
+      scales:{
+        x:{title:{display:true,text:'Portfolio loss (% of notional)',color:COL.inkDim},
+           ticks:{maxTicksLimit:12,callback:function(v,i){return i%4===0?this.getLabelForValue(v):'';}}},
+        y:{title:{display:true,text:'Frequency',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+document.getElementById('runMc').addEventListener('click',runMC);
+document.getElementById('resetMc').addEventListener('click',()=>{
+  document.getElementById('nNames').value=100;
+  document.getElementById('pd').value=0.05;
+  document.getElementById('rhoMc').value=0.20;
+  document.getElementById('rec').value=0.40;
+  document.getElementById('paths').value=10000;
+  runMC();
+});
+['nNames','pd','rhoMc','rec','paths'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    document.getElementById('nNamesLabel').textContent=document.getElementById('nNames').value;
+    document.getElementById('pdLabel').textContent=pct(+document.getElementById('pd').value,1);
+    document.getElementById('rhoMcLabel').textContent=(+document.getElementById('rhoMc').value).toFixed(2);
+    document.getElementById('recLabel').textContent=pct(+document.getElementById('rec').value,0);
+    document.getElementById('pathsLabel').textContent=(+document.getElementById('paths').value).toLocaleString();
+  });
+});
+
+/* ===========================================================
+   SECTION 5 — CDO TRANCHES
+   =========================================================== */
+let trancheChart, poolSizeChart, rhoSensChart;
+
+function trancheLoss(loss, attach, detach){
+  // tranche notional = detach - attach. tranche loss = max(0, min(loss-attach, detach-attach))
+  return Math.max(0, Math.min(loss-attach, detach-attach));
+}
+
+function computeTranches(N, pd, rho, R, attaches){
+  // attaches: array of pct break points e.g. [0,3,7,15,30,100]
+  // simulate to build expected tranche loss distribution
+  const T=5; // years
+  const lgd=1-R;
+  const paths=20000;
+  const sqrtRho=Math.sqrt(rho), sqrt1mRho=Math.sqrt(1-rho);
+  const thr=normInv(pd);
+
+  const numTranches=attaches.length-1;
+  const trancheELs=new Array(numTranches).fill(0); // expected loss in pct of pool
+  const tranchePDs=new Array(numTranches).fill(0); // probability of any loss to tranche
+
+  for(let p=0;p<paths;p++){
+    const M=randn();
+    let defaults=0;
+    for(let i=0;i<N;i++){
+      const A=sqrtRho*M+sqrt1mRho*randn();
+      if(A<=thr)defaults++;
+    }
+    const portLoss=defaults*lgd/N; // fraction of pool
+    for(let t=0;t<numTranches;t++){
+      const a=attaches[t]/100, d=attaches[t+1]/100;
+      const tl=trancheLoss(portLoss,a,d);
+      trancheELs[t]+=tl;
+      if(tl>1e-9)tranchePDs[t]+=1;
+    }
+  }
+  const results=[];
+  for(let t=0;t<numTranches;t++){
+    const a=attaches[t]/100, d=attaches[t+1]/100;
+    const width=d-a;
+    const el=trancheELs[t]/paths;       // E[tranche loss] in pct of pool
+    const elTranche=el/width;            // as pct of tranche notional
+    const probHit=tranchePDs[t]/paths;
+    const spreadBps=elTranche/T*10000;
+    results.push({attach:attaches[t],detach:attaches[t+1],width:width*100,el,elTranche,probHit,spreadBps});
+  }
+  return results;
+}
+
+function renderTrancheStack(results, names){
+  const stack=document.getElementById('trancheStack');
+  stack.innerHTML='';
+  const colors=[COL.bad, '#ff8a5c', COL.warn, COL.accent, COL.good];
+  const labels=['Equity','Mezz Jr','Mezz Sr','Senior','Super-Senior'];
+  results.forEach((r,i)=>{
+    const fillPct=Math.min(100, 100*r.elTranche);
+    const div=document.createElement('div');
+    div.className='tranche-bar';
+    div.style.background=colors[i]+'20';
+    div.style.borderLeft=`3px solid ${colors[i]}`;
+    div.innerHTML=`
+      <div class="fill" style="width:${fillPct}%;background:${colors[i]}25"></div>
+      <div class="content">
+        <span class="name" style="color:${colors[i]}">${labels[i]} · ${r.attach}%–${r.detach}%</span>
+        <span style="color:${COL.inkDim}">EL: <strong style="color:${COL.ink}">${pct(r.elTranche,2)}</strong> · Spread: <strong style="color:${COL.accent}">${r.spreadBps.toFixed(0)} bps</strong></span>
+      </div>`;
+    stack.appendChild(div);
+  });
+}
+
+function renderTrancheTable(results){
+  const labels=['Equity','Mezz Jr','Mezz Sr','Senior','Super-Senior'];
+  const tbody=document.getElementById('trancheTable');
+  tbody.innerHTML='';
+  results.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${labels[i]}</td>
+      <td class="num">${r.attach}%</td>
+      <td class="num">${r.detach}%</td>
+      <td class="num">${r.width.toFixed(0)}%</td>
+      <td class="num accent">${pct(r.probHit,1)}</td>
+      <td class="num">${pct(r.elTranche,3)}</td>
+      <td class="num ${r.spreadBps>500?'bad':(r.spreadBps>100?'warn':'good')}">${r.spreadBps.toFixed(0)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function runCdo(){
+  const N=+document.getElementById('cdoNames').value;
+  const pd=+document.getElementById('cdoPd').value;
+  const rho=+document.getElementById('cdoRho').value;
+  const R=+document.getElementById('cdoRec').value;
+  const a1=+document.getElementById('att1').value;
+  const a2=+document.getElementById('att2').value;
+  const a3=+document.getElementById('att3').value;
+  const a4=+document.getElementById('att4').value;
+
+  document.getElementById('cdoPdLabel').textContent=pct(pd,1);
+  document.getElementById('cdoRhoLabel').textContent=rho.toFixed(2);
+  document.getElementById('cdoRecLabel').textContent=pct(R,0);
+  document.getElementById('att1Label').textContent=a1;
+  document.getElementById('att2Label').textContent=a2;
+  document.getElementById('att3Label').textContent=a3;
+  document.getElementById('att4Label').textContent=a4;
+
+  const attaches=[0,a1,a2,a3,a4,100];
+  const results=computeTranches(N,pd,rho,R,attaches);
+  renderTrancheStack(results,N);
+  renderTrancheTable(results);
+}
+
+['cdoNames','cdoPd','cdoRho','cdoRec','att1','att2','att3','att4'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    // update labels live; defer compute to button
+    document.getElementById('cdoPdLabel').textContent=pct(+document.getElementById('cdoPd').value,1);
+    document.getElementById('cdoRhoLabel').textContent=(+document.getElementById('cdoRho').value).toFixed(2);
+    document.getElementById('cdoRecLabel').textContent=pct(+document.getElementById('cdoRec').value,0);
+    document.getElementById('att1Label').textContent=document.getElementById('att1').value;
+    document.getElementById('att2Label').textContent=document.getElementById('att2').value;
+    document.getElementById('att3Label').textContent=document.getElementById('att3').value;
+    document.getElementById('att4Label').textContent=document.getElementById('att4').value;
+  });
+});
+document.getElementById('runCdo').addEventListener('click',runCdo);
+
+/* Pool size effect */
+function renderPoolSize(){
+  const sizes=[10,20,50,100];
+  const colors=[COL.bad,COL.warn,COL.accent,COL.good];
+  const pd=0.05, rho=0.20;
+  const datasets=sizes.map((N,i)=>{
+    const pmf=lossPmf(N,pd,rho,80);
+    return {
+      label:`N = ${N}`,
+      data:pmf.map((v,k)=>({x:k/N,y:v})),
+      borderColor:colors[i],
+      backgroundColor:colors[i]+'20',
+      pointRadius:0,borderWidth:2,tension:0.2,fill:false,
+      stepped:false
+    };
+  });
+  if(poolSizeChart)poolSizeChart.destroy();
+  poolSizeChart=new Chart(document.getElementById('poolSizeChart'),{
+    type:'line',
+    data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:COL.inkDim}}},
+      scales:{
+        x:{type:'linear',min:0,max:0.30,title:{display:true,text:'Default rate (fraction of names)',color:COL.inkDim}},
+        y:{title:{display:true,text:'Probability mass',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+/* ρ sensitivity per tranche (analytical via loss pmf) */
+function renderRhoSens(){
+  const N=100, pd=0.05, R=0.40, lgd=1-R;
+  const tranches=[
+    {name:'Equity 0-3%',a:0,d:0.03,col:COL.bad},
+    {name:'Mezz Jr 3-7%',a:0.03,d:0.07,col:'#ff8a5c'},
+    {name:'Mezz Sr 7-15%',a:0.07,d:0.15,col:COL.warn},
+    {name:'Senior 15-30%',a:0.15,d:0.30,col:COL.accent},
+    {name:'Super-Senior 30-100%',a:0.30,d:1.00,col:COL.good}
+  ];
+  const rhos=[];
+  for(let r=0.01;r<=0.85;r+=0.04)rhos.push(r);
+  const datasets=tranches.map(t=>{
+    const ys=rhos.map(r=>{
+      const pmf=lossPmf(N,pd,r,60);
+      let el=0;
+      for(let k=0;k<=N;k++){
+        const loss=k*lgd/N;
+        const tl=trancheLoss(loss,t.a,t.d);
+        el+=pmf[k]*tl;
+      }
+      return el/(t.d-t.a); // pct of tranche notional
+    });
+    return {label:t.name,data:rhos.map((r,i)=>({x:r,y:ys[i]*100})),
+      borderColor:t.col,backgroundColor:t.col+'20',pointRadius:0,borderWidth:2,tension:0.25};
+  });
+  if(rhoSensChart)rhoSensChart.destroy();
+  rhoSensChart=new Chart(document.getElementById('rhoSensChart'),{
+    type:'line',data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:COL.inkDim,font:{size:10}}}},
+      scales:{
+        x:{type:'linear',min:0,max:0.85,title:{display:true,text:'Asset correlation ρ',color:COL.inkDim}},
+        y:{title:{display:true,text:'E[tranche loss] (% of tranche notional)',color:COL.inkDim}}
+      }
+    }
+  });
+}
+
+/* ===========================================================
+   SECTION 6 — STRESS SCENARIOS
+   =========================================================== */
+let stressChart;
+function renderStress(){
+  const N=100, pd=0.05, R=0.40, lgd=1-R;
+  const scenarios=[
+    {name:'Benign ρ=0.10',rho:0.10,col:COL.good},
+    {name:'Base ρ=0.20',rho:0.20,col:COL.accent},
+    {name:'Stressed ρ=0.40',rho:0.40,col:COL.warn},
+    {name:'Crisis ρ=0.70',rho:0.70,col:COL.bad}
+  ];
+  const datasets=scenarios.map(s=>{
+    const pmf=lossPmf(N,pd,s.rho,80);
+    // CDF of losses
+    const lossPts=[];
+    let cum=0;
+    for(let k=0;k<=N;k++){
+      cum+=pmf[k];
+      const loss=k*lgd/N;
+      lossPts.push({x:loss*100, y:1-cum}); // exceedance probability
+    }
+    return {label:s.name,data:lossPts,borderColor:s.col,backgroundColor:s.col+'20',
+      pointRadius:0,borderWidth:2.2,tension:0.05};
+  });
+  if(stressChart)stressChart.destroy();
+  stressChart=new Chart(document.getElementById('stressChart'),{
+    type:'line',data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{color:COL.inkDim}},
+        tooltip:{mode:'index',intersect:false,backgroundColor:COL.border}
+      },
+      scales:{
+        x:{type:'linear',min:0,max:50,title:{display:true,text:'Loss threshold (% of pool)',color:COL.inkDim}},
+        y:{type:'logarithmic',min:1e-4,max:1,
+           title:{display:true,text:'P(loss > threshold)  [log scale]',color:COL.inkDim}}
+      }
+    }
+  });
+
+  // senior expected loss for each
+  scenarios.forEach((s,i)=>{
+    const pmf=lossPmf(N,pd,s.rho,80);
+    let el=0;
+    for(let k=0;k<=N;k++){
+      const loss=k*lgd/N;
+      const tl=trancheLoss(loss,0.15,0.30);
+      el+=pmf[k]*tl;
+    }
+    el=el/0.15;
+    document.getElementById(`sc${i+1}Senior`).textContent=pct(el,2);
+  });
+
+  // stress table
+  const thresholds=[0.05,0.10,0.15,0.20,0.30];
+  const tbody=document.getElementById('stressTable');
+  tbody.innerHTML='';
+  thresholds.forEach(thr=>{
+    const tr=document.createElement('tr');
+    let row=`<td>Loss > ${pct(thr,0)}</td>`;
+    scenarios.forEach(s=>{
+      const pmf=lossPmf(N,pd,s.rho,80);
+      let prob=0;
+      for(let k=0;k<=N;k++){
+        const loss=k*lgd/N;
+        if(loss>thr)prob+=pmf[k];
+      }
+      const cls=prob>0.10?'bad':(prob>0.01?'warn':'');
+      row+=`<td class="num ${cls}">${prob>0.0001?pct(prob,2):'<0.01%'}</td>`;
+    });
+    tr.innerHTML=row;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ===========================================================
+   INITIALIZATION
+   =========================================================== */
+window.addEventListener('load',()=>{
+  renderSurfaces();
+  renderDerivChart();
+  recalcExample();
+  renderLossDist();
+  runMC();
+  runCdo();
+  renderPoolSize();
+  renderRhoSens();
+  renderStress();
+});
+</script>
+
+</body>
+</html>

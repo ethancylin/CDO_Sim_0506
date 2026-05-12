@@ -1,4 +1,4 @@
-# Project description
+   # Project description
 
 Randomly pick 10 firms from the provided list (./references/index.pdf). Create a 5-year CDO with these firms with three tranches: 0-3%, 3-6%, 6-10%. Analyze the default probabilities of each tranche.
 
